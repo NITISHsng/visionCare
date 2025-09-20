@@ -1,0 +1,181 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Calendar, Clock, Users, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useAppointments } from '@/src/hooks/useAppointments';
+
+export function ScheduleTab() {
+  const { appointments } = useAppointments();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const formatDate = (date: Date) => {
+    return date.toISOString().split('T')[0];
+  };
+
+  const dayAppointments = appointments.filter(apt => 
+    apt.preferredDate === formatDate(selectedDate)
+  ).sort((a, b) => a.preferredTime.localeCompare(b.preferredTime));
+
+  const previousDay = () => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(newDate.getDate() - 1);
+    setSelectedDate(newDate);
+  };
+
+  const nextDay = () => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(newDate.getDate() + 1);
+    setSelectedDate(newDate);
+  };
+
+  const timeSlots = [
+    '09:00', '10:00', '11:00', '12:00', 
+    '14:00', '15:00', '16:00', '17:00'
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Schedule Management</h1>
+        <p className="text-gray-600">View and manage daily appointment schedule</p>
+      </div>
+
+      {/* Date Navigator */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={previousDay}
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-gray-900">
+              {selectedDate.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </h2>
+            <p className="text-sm text-gray-500">{dayAppointments.length} appointments scheduled</p>
+          </div>
+          <button
+            onClick={nextDay}
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="flex justify-center">
+          <input
+            type="date"
+            value={formatDate(selectedDate)}
+            onChange={(e) => setSelectedDate(new Date(e.target.value))}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+        </div>
+      </div>
+
+      {/* Schedule Grid */}
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="p-4 border-b border-gray-200 bg-gray-50">
+          <h3 className="text-lg font-semibold text-gray-900">Daily Schedule</h3>
+        </div>
+        
+        <div className="p-4">
+          <div className="space-y-2">
+            {timeSlots.map((time) => {
+              const appointment = dayAppointments.find(apt => apt.preferredTime === time);
+              
+              return (
+                <div key={time} className="flex items-center border-b border-gray-100 py-3 last:border-b-0">
+                  <div className="w-20 text-sm font-medium text-gray-600">
+                    {time}
+                  </div>
+                  <div className="flex-1 ml-4">
+                    {appointment ? (
+                      <div className={`p-3 rounded-lg border-l-4 ${
+                        appointment.status === 'confirmed' ? 'bg-green-50 border-green-400' :
+                        appointment.status === 'pending' ? 'bg-orange-50 border-orange-400' :
+                        appointment.status === 'completed' ? 'bg-blue-50 border-blue-400' :
+                        'bg-red-50 border-red-400'
+                      }`}>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-gray-900">{appointment.ptName}</p>
+                            <p className="text-sm text-gray-600">Age: {appointment.age} • {appointment.phoneNo}</p>
+                            <p className="text-sm text-gray-600 capitalize">{appointment.purpose.replace('-', ' ')}</p>
+                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            appointment.status === 'pending' ? 'bg-orange-100 text-orange-700' :
+                            appointment.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                            appointment.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
+                            {appointment.status}
+                          </span>
+                        </div>
+                        {appointment.notes && (
+                          <p className="text-sm text-gray-600 mt-2">{appointment.notes}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="p-3 border-2 border-dashed border-gray-200 rounded-lg text-center">
+                        <p className="text-sm text-gray-400">No appointment scheduled</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+              <Calendar className="h-5 w-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
+              <p className="text-xl font-bold text-gray-900">{dayAppointments.length}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+              <Clock className="h-5 w-5 text-orange-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-600">Pending Today</p>
+              <p className="text-xl font-bold text-gray-900">
+                {dayAppointments.filter(apt => apt.status === 'pending').length}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Users className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-600">Confirmed Today</p>
+              <p className="text-xl font-bold text-gray-900">
+                {dayAppointments.filter(apt => apt.status === 'confirmed').length}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
