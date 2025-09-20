@@ -9,16 +9,15 @@ import {
 
 import { useAppointments } from '@/src/hooks/useAppointments';
 import { usePatients } from '@/src/hooks/usePatients';
-import { useOperators } from '@/src/hooks/useOperators';
-
+import { useDashboardData } from '@/src/contexts/dataCollection';
 export function DashboardOverview() {
-  const { appointments } = useAppointments();
+  const {staffs,appointments}=useDashboardData();
+  // const { appointments } = useAppointments();
   const { patients } = usePatients();
-  const { operators } = useOperators();
 
   const stats = {
     totalPatients: patients.length,
-    totalOperators: operators.length,
+    totalOperators: staffs.length,
     todayAppointments: appointments.filter(apt => 
       new Date(apt.preferredDate).toDateString() === new Date().toDateString()
     ).length,
@@ -54,8 +53,8 @@ export function DashboardOverview() {
         <div className="bg-white rounded-lg p-6 border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Active Operators</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalOperators}</p>
+              <p className="text-sm font-medium text-gray-600">Total Staff</p>
+              <p className="text-2xl font-bold text-gray-900">{staffs.length}</p>
             </div>
             <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
               <Eye className="h-6 w-6 text-teal-600" />
@@ -66,8 +65,11 @@ export function DashboardOverview() {
         <div className="bg-white rounded-lg p-6 border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.todayAppointments}</p>
+              <p className="text-sm font-medium text-gray-600">Total Appointments</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {/* {stats.todayAppointments} */}
+                {appointments.length}
+                </p>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <Calendar className="h-6 w-6 text-green-600" />

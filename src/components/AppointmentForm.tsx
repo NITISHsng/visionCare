@@ -12,14 +12,25 @@ export const appointmentForm: React.FC<PatientFormProps> = ({ setShowBookingForm
      const [formValues, setFormValues] = useState<Appointment>(initialAppointment);
     
       // handleChange updates state whenever an input changes
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormValues(prev => ({
-          ...prev,
-          [name]: value,
-        }));
-        console.log(formValues)
-      };
+const handleChange = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+) => {
+  const { name, value } = e.target;
+  let formattedValue = value;
+
+  if (name === "preferredDate" && value) {
+    const [year, month, day] = value.split("-"); 
+    formattedValue = `${day}-${month}-${year}`; 
+  }
+
+  setFormValues((prev) => ({
+    ...prev,
+    [name]: formattedValue,
+  }));
+
+  console.log({ ...formValues, [name]: formattedValue });
+};
+
     const handleBookAppointment = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
     console.log(formValues)

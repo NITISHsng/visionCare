@@ -2,7 +2,7 @@
 import {useState,useEffect} from "react";
 import { Staff,Service,Appointment } from "./type";
 export function useDashboardData() {
-  const [staffs, setStaffs] = useState<Staff[] | null>(null);
+  const [staffs, setStaffs] = useState<Staff[] >([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [services, setServices] = useState<Service[]>([]);
 

@@ -1,49 +1,46 @@
 'use client';
 
 import { useState } from 'react';
-import { User } from '@/types';
 
+import { Staff } from '../contexts/type';
 // Mock operators data
-const MOCK_OPERATORS: User[] = [
+const MOCK_OPERATORS: Staff[] = [
   {
     id: '2',
     email: 'operator@kachakali.com',
-    fullName: 'Operator Sharma',
+    name: 'Operator Sharma',
     role: 'operator',
     phone: '+91 9876543211',
-    isActive: true,
+    password:"password",
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   },
   {
     id: '3',
     email: 'operator2@kachakali.com',
-    fullName: 'Operator Patel',
+    name: 'Operator Patel',
     role: 'operator',
     phone: '+91 9876543212',
-    isActive: true,
+     password:"password",
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   },
 ];
 
 export function useOperators() {
-  const [operators, setOperators] = useState<User[]>(MOCK_OPERATORS);
+  const [operators, setOperators] = useState<Staff[]>(MOCK_OPERATORS);
   const [loading, setLoading] = useState(false);
 
-  const addOperator = (operatorData: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'role'>) => {
-    const newOperator: User = {
+  const addOperator = (operatorData: Omit<Staff, 'id' | 'createdAt' | 'updatedAt' | 'role'>) => {
+    const newOperator: Staff = {
       ...operatorData,
       id: Math.random().toString(36).substr(2, 9),
       role: 'operator',
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
     };
     
     setOperators(prev => [newOperator, ...prev]);
   };
 
-  const updateOperator = (id: string, updates: Partial<User>) => {
+  const updateOperator = (id: string, updates: Partial<Staff>) => {
     setOperators(prev => 
       prev.map(operator => 
         operator.id === id 

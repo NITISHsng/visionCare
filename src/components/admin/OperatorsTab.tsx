@@ -2,19 +2,19 @@
 
 import React, { useState } from 'react';
 import { UserPlus, Mail, Phone, Plus, Search, Shield,CheckCircle } from 'lucide-react';
-import { useOperators } from '@/src/hooks/useOperators';
 import { Staff } from '../../contexts/type';
 import { initialStaff } from '../../contexts/type';
-
+import { useDashboardData } from '@/src/contexts/dataCollection';
 export function OperatorsTab() {
-  const { operators } = useOperators();
+  const {staffs}=useDashboardData();
+  console.log(staffs);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [saveSuccessfully, setSaveSuccessfully] = useState(false);
 
-  const filteredOperators = operators.filter(operator => 
-    operator.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    operator.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredOperators = staffs.filter(operator => 
+    operator.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    operator.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (operator.phone && operator.phone.includes(searchTerm))
   );
 
@@ -107,18 +107,13 @@ export function OperatorsTab() {
                   <UserPlus className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{operator.fullName}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{operator.name}</h3>
                   <div className="flex items-center space-x-2">
                     <Shield className="h-3 w-3 text-gray-400" />
                     <span className="text-sm text-gray-500 capitalize">{operator.role}</span>
                   </div>
                 </div>
               </div>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                operator.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-              }`}>
-                {operator.isActive ? 'Active' : 'Inactive'}
-              </span>
             </div>
 
             <div className="space-y-2 mb-4">

@@ -5,12 +5,12 @@ import { Eye, Plus, Search, Clock, DollarSign,CheckCircle } from 'lucide-react';
 import { useServices } from '@/src/hooks/useServices';
 import { Service } from "@/src/contexts/type"; // your Service type
 import { initialService } from '@/src/contexts/type'; // initialService object
-
+import { useDashboardData } from '@/src/contexts/dataCollection';
 export function ServicesTab() {
   const [showServiceForm, setShowServiceFrom] = useState(false);
   const [serviceAddSuccess, setServiceAddSuccess] = useState(false);
-
-  const { services, deleteService } = useServices();
+  const {services}=useDashboardData();
+  const { deleteService } = useServices();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [serviceForm, setServiceForm] = useState<Service>(initialService);
@@ -113,8 +113,8 @@ export function ServicesTab() {
 
       {/* Services Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredServices.map((service) => (
-          <div key={service.id} className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
+        {filteredServices.map((service,index) => (
+          <div key={index} className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">{service.name}</h3>
               <div className="flex items-center space-x-2">
@@ -155,7 +155,7 @@ export function ServicesTab() {
                 {service.isActive ? 'Deactivate' : 'Activate'}
               </button>
               <button
-                onClick={() => deleteService(service.id)}
+                // onClick={() => deleteService(index)}
                 className="text-red-600 hover:text-red-800 text-sm font-medium transition-colors"
               >
                 Delete

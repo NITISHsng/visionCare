@@ -3,13 +3,16 @@
 import React, { useState } from "react";
 import { Calendar, Clock, Phone, Eye, Plus, Search,CheckCircle } from "lucide-react";
 import { useAppointments } from "@/src/hooks/useAppointments";
+import { useDashboardData } from "@/src/contexts/dataCollection";
 import AppointmentForm from "@/src/components/AppointmentForm"
+
 export function AppointmentsTab() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-
-  const { appointments, updateAppointment, deleteAppointment } =
+ const  {appointments}=useDashboardData();
+  const {  updateAppointment, deleteAppointment } =
     useAppointments();
+ console.log(appointments)
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
@@ -19,9 +22,9 @@ export function AppointmentsTab() {
       statusFilter === "all" || appointment.status === statusFilter;
     const matchesSearch =
       appointment.ptName
-        // .toLowerCase()
-        // .includes(searchTerm.toLowerCase()) ||
-      // appointment.phoneNo.includes(searchTerm);
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      appointment.phoneNo.includes(searchTerm);
     const matchesDate = !dateFilter || appointment.preferredDate === dateFilter;
     return matchesStatus && matchesSearch && matchesDate;
   });
