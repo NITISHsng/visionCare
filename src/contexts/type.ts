@@ -75,10 +75,59 @@ export const initialAppointment: Appointment = {
 };
 
 
-export type OpticalPatientRecord = Appointment & {
+export type Patient =  {
   orderDate: string;          // Order date (DD/MM/YY)               // Age of patient
   billNo: string;             // Bill number (unique)
+  date:string;
+  // Eye power / prescription
+  rPower: string;             // Right eye power
+  lPower: string;             // Left eye power
+  cylinderR?: string;         // Right eye cylinder (if astigmatism)
+  cylinderL?: string;         // Left eye cylinder
+  axisR?: string;             // Right eye axis
+  axisL?: string;             // Left eye axis
+  addPowerR?: string;         // Right eye near addition
+  addPowerL?: string;         // Left eye near addition
+
+  // Medical details
+  diagnosis?: string;         // Eye problem (e.g., myopia, hyperopia, cataract)
+  doctorName?: string;        // Doctor/Optometrist name
+  prescriptionDate?: string;  // Prescription date
+  remarks?: string;           // Extra notes
   
+  // Order details
+  vendor?: string;
+  rate?: number;
+  frame?: number;
+  lens?: number;
+  total?: number;
+  discount?: number;
+  advance?: number;
+  due?: number;
+  received?: number;
+  deliveryDate?: string;
+  opticalTotal?: number;
+  location?:string;
+};
+
+export type abc =  {
+    id: string;
+  ptName: string;
+  age: number; // should be number, not string
+  phoneNo: string;
+  preferredDate: string; // YYYY-MM-DD
+  preferredTime: string; // HH:mm
+  purpose: "eye-test" | "frame-selection" | "consultation" | "follow-up";
+  status: "pending" | "confirmed" | "completed" | "cancelled";
+  notes?: string;
+  assignedOperator?: string;
+  createdAt: string;
+  updatedAt: string;
+  gender: "m" | "f" | "other";
+  
+  orderDate: string;          // Order date (DD/MM/YY)               // Age of patient
+  billNo: string;             // Bill number (unique)
+  date:string;
   // Eye power / prescription
   rPower: string;             // Right eye power
   lPower: string;             // Left eye power
@@ -111,13 +160,18 @@ export type OpticalPatientRecord = Appointment & {
 };
 
 
-export const initialOpticalFormData: OpticalPatientRecord = {
-  ...initialAppointment,
+export type PatientFullType = {
+  Appointment: Appointment;
+  Patient: Patient;
+};
+const now = new Date();
+const formattedDate = `${String(now.getDate()).padStart(2, "0")}-${String(
+  now.getMonth() + 1
+).padStart(2, "0")}-${String(now.getFullYear()).slice(-2)}`; // dd-mm-yy
+
+export const initialPatient: Patient = {
+  date:formattedDate,
   orderDate: "",          
-  ptName: "",
-  age: 0,
-  gender: "m",
-  phoneNo: "",
   billNo: "",
 
   rPower: "",

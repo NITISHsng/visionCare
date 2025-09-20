@@ -12,28 +12,30 @@ export const appointmentForm: React.FC<PatientFormProps> = ({ setShowBookingForm
      const [formValues, setFormValues] = useState<Appointment>(initialAppointment);
     
       // handleChange updates state whenever an input changes
-const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-) => {
-  const { name, value } = e.target;
-  let formattedValue = value;
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormValues(prev => ({
+          ...prev,
+          [name]: value,
+        }));
+        console.log(formValues)
+      };
 
-  if (name === "preferredDate" && value) {
-    const [year, month, day] = value.split("-"); 
-    formattedValue = `${day}-${month}-${year}`; 
-  }
+      function generateAppointmentId() {
+  const now = new Date();
 
-  setFormValues((prev) => ({
-    ...prev,
-    [name]: formattedValue,
-  }));
+  const yy = String(now.getFullYear()).slice(-2); // last 2 digits of year
+  const mm = String(now.getMonth() + 1).padStart(2, "0"); // months 0-11
+  const dd = String(now.getDate()).padStart(2, "0");
+  const hh = String(now.getHours()).padStart(2, "0");
+  const min = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
 
-  console.log({ ...formValues, [name]: formattedValue });
-};
-
+  return `${yy}${mm}${dd}${hh}${min}${ss}`;
+}
     const handleBookAppointment = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-    console.log(formValues)
+    formValues.id=generateAppointmentId();
       try {
         const res = await fetch("/api/appointment", {
           method: "POST",

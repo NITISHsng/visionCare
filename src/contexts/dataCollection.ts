@@ -1,10 +1,11 @@
 "use client"
 import {useState,useEffect} from "react";
-import { Staff,Service,Appointment } from "./type";
+import { Staff,Service,Appointment,PatientFullType } from "./type";
 export function useDashboardData() {
   const [staffs, setStaffs] = useState<Staff[] >([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [patients, setPatients] = useState<PatientFullType[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -14,6 +15,7 @@ export function useDashboardData() {
         setStaffs(data.staff || []);
         setAppointments(data.appointments || []);
         setServices(data.services || []);
+        setPatients(data.patients || []);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
       }
@@ -21,5 +23,5 @@ export function useDashboardData() {
     fetchData();
   }, []);
 
-  return { staffs, appointments, services };
+  return { staffs, appointments, services,patients };
 }

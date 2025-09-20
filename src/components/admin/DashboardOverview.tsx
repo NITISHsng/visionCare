@@ -7,14 +7,13 @@ import {
 } from 'lucide-react';
 
 
-import { useAppointments } from '@/src/hooks/useAppointments';
 import { usePatients } from '@/src/hooks/usePatients';
 import { useDashboardData } from '@/src/contexts/dataCollection';
 export function DashboardOverview() {
-  const {staffs,appointments}=useDashboardData();
+  const {staffs,appointments,patients}=useDashboardData();
   // const { appointments } = useAppointments();
-  const { patients } = usePatients();
-
+  // const { patients } = usePatients();
+console.log(patients)
   const stats = {
     totalPatients: patients.length,
     totalOperators: staffs.length,

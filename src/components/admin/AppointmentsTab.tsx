@@ -1,40 +1,80 @@
 "use client";
 
 import React, { useState } from "react";
-import { Calendar, Clock, Phone, Eye, Plus, Search,CheckCircle } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Phone,
+  Eye,
+  Plus,
+  Search,
+  CheckCircle,
+} from "lucide-react";
 import { useAppointments } from "@/src/hooks/useAppointments";
 import { useDashboardData } from "@/src/contexts/dataCollection";
-import AppointmentForm from "@/src/components/AppointmentForm"
+import AppointmentForm from "@/src/components/AppointmentForm";
+import { Appointment } from "@/src/contexts/type";
 
 export function AppointmentsTab() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
- const  {appointments}=useDashboardData();
-  const {  updateAppointment, deleteAppointment } =
-    useAppointments();
- console.log(appointments)
+  const { appointments } = useDashboardData();
+  const { deleteAppointment } = useAppointments();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
+
+  // Track local edits for status
+  const [editedAppointments, setEditedAppointments] = useState<{
+    [id: string]: Appointment;
+  }>({});
 
   const filteredAppointments = appointments.filter((appointment) => {
     const matchesStatus =
       statusFilter === "all" || appointment.status === statusFilter;
     const matchesSearch =
-      appointment.ptName
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
+      appointment.ptName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.phoneNo.includes(searchTerm);
-    const matchesDate = !dateFilter || appointment.preferredDate === dateFilter;
+    const matchesDate =
+      !dateFilter || appointment.preferredDate === dateFilter;
     return matchesStatus && matchesSearch && matchesDate;
   });
 
-  const handleStatusChange = (id: string, newStatus: string) => {
-    updateAppointment(id, { status: newStatus as any });
+  // Track status changes locally
+  const handleStatusChange = (appointment: Appointment[], newStatus: string) => {
+    setEditedAppointments((prev) => ({
+      ...prev,
+      [appointment.id]: { ...appointment, status: newStatus },
+    }));
+  };
+
+  // Save entire appointment document
+  const saveAppointment = async (id: string) => {
+    const updatedAppointment = editedAppointments[id];
+    if (!updatedAppointment) return;
+
+    try {
+      const res = await fetch("/api/appointment", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedAppointment), // send full document
+      });
+
+      if (!res.ok) throw new Error("Failed to save");
+
+      const data = await res.json();
+      console.log("Appointment updated:", data);
+      alert("Saved successfully!");
+
+    } catch (err) {
+      console.error("Error updating appointment:", err);
+      alert("Failed to save appointment.");
+    }
   };
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
@@ -53,23 +93,28 @@ export function AppointmentsTab() {
         </button>
       </div>
 
+      {/* Booking Form */}
+      {showBookingForm && (
+        <AppointmentForm
+          setShowBookingForm={setShowBookingForm}
+          setBookingSuccess={setBookingSuccess}
+        />
+      )}
 
-    {showBookingForm && (
-  <div>
-    <AppointmentForm setShowBookingForm={setShowBookingForm} setBookingSuccess={setBookingSuccess}/>
-  </div>
-)}
-      {/* Success Message */}
+      {/* Booking Success */}
       {bookingSuccess && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-3">
             <CheckCircle className="h-5 w-5 text-green-600" />
-            <span className="text-green-800">Appointment booked successfully! We'll contact you soon to confirm.</span>
+            <span className="text-green-800">
+              Appointment booked successfully! We'll contact you soon to
+              confirm.
+            </span>
           </div>
         </div>
       )}
 
-      {/* Advanced Filters */}
+      {/* Filters */}
       <div className="bg-white rounded-lg p-6 border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
@@ -87,6 +132,7 @@ export function AppointmentsTab() {
               />
             </div>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Status
@@ -103,6 +149,7 @@ export function AppointmentsTab() {
               <option value="cancelled">Cancelled</option>
             </select>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Date
@@ -114,6 +161,7 @@ export function AppointmentsTab() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
+
           <div className="flex items-end">
             <button
               onClick={() => {
@@ -131,79 +179,90 @@ export function AppointmentsTab() {
 
       {/* Appointments Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredAppointments.map((appointment) => (
-          <div
-            key={appointment.id}
-            className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {appointment.ptName}
-                </h3>
-                <p className="text-sm text-gray-500">Age: {appointment.age}</p>
-              </div>
-              <select
-                value={appointment.status}
-                onChange={(e) =>
-                  handleStatusChange(appointment.id, e.target.value)
-                }
-                className={`text-xs rounded-full px-3 py-1 font-medium border-0 focus:ring-2 focus:ring-teal-500 ${
-                  appointment.status === "pending"
-                    ? "bg-orange-100 text-orange-700"
-                    : appointment.status === "confirmed"
-                    ? "bg-green-100 text-green-700"
-                    : appointment.status === "completed"
-                    ? "bg-blue-100 text-blue-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
+        {filteredAppointments.map((appointment) => {
+          const editedAppointment =
+            editedAppointments[appointment.id] ?? appointment;
 
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Calendar className="h-4 w-4" />
-                <span>{appointment.preferredDate}</span>
+          return (
+            <div
+              key={appointment.id}
+              className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {appointment.ptName}
+                  </h3>
+                  <p className="text-sm text-gray-500">Age: {appointment.age}</p>
+                </div>
+                <select
+                  value={editedAppointment.status}
+                  onChange={(e) =>
+                    handleStatusChange(appointment, e.target.value)
+                  }
+                  className={`text-xs rounded-full px-3 py-1 font-medium border-0 focus:ring-2 focus:ring-teal-500 ${
+                    editedAppointment.status === "pending"
+                      ? "bg-orange-100 text-orange-700"
+                      : editedAppointment.status === "confirmed"
+                      ? "bg-green-100 text-green-700"
+                      : editedAppointment.status === "completed"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
               </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Clock className="h-4 w-4" />
-                <span>{appointment.preferredTime}</span>
+
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <Calendar className="h-4 w-4" />
+                  <span>{appointment.preferredDate}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <Clock className="h-4 w-4" />
+                  <span>{appointment.preferredTime}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <Phone className="h-4 w-4" />
+                  <span>{appointment.phoneNo}</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <Eye className="h-4 w-4" />
+                  <span className="capitalize">
+                    {appointment.purpose.replace("-", " ")}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Phone className="h-4 w-4" />
-                <span>{appointment.phoneNo}</span>
-              </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Eye className="h-4 w-4" />
-                <span className="capitalize">
-                  {appointment.purpose.replace("-", " ")}
-                </span>
+
+              {appointment.notes && (
+                <div className="mb-4">
+                  <p className="text-sm text-gray-600">
+                    <strong>Notes:</strong> {appointment.notes}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex justify-between space-x-2">
+                <button
+                  onClick={() => deleteAppointment(appointment.id)}
+                  className="px-3 py-1 text-red-600 hover:text-red-800 text-sm font-medium transition-colors"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => saveAppointment(appointment.id)}
+                  className="px-3 py-1 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors"
+                >
+                  Save
+                </button>
               </div>
             </div>
-
-            {appointment.notes && (
-              <div className="mb-4">
-                <p className="text-sm text-gray-600">
-                  <strong>Notes:</strong> {appointment.notes}
-                </p>
-              </div>
-            )}
-
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => deleteAppointment(appointment.id)}
-                className="px-3 py-1 text-red-600 hover:text-red-800 text-sm font-medium transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {filteredAppointments.length === 0 && (

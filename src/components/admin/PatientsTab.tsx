@@ -6,24 +6,29 @@ import {
   Edit, Trash2, User 
 } from 'lucide-react';
 import { usePatients } from '@/src/hooks/usePatients';
-import { Patient } from '@/types';
-
+import { Appointment ,Patient ,abc} from '@/src/contexts/type';
+import { useDashboardData } from '@/src/contexts/dataCollection';
 export function PatientsTab() {
 
-
-  
-  const { patients, addPatient, updatePatient, deletePatient } = usePatients();
+type PatientFullType = {
+  Appointment: Appointment;
+  Patient: Patient;
+};
+  const {patients}=useDashboardData();
+  const { addPatient, updatePatient, deletePatient } = usePatients();
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
+  const [editingPatient, setEditingPatient] = useState<PatientFullType | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   const filteredPatients = patients.filter(patient => 
-    patient.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.phone.includes(searchTerm) ||
+    patient.ptName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    patient.phoneNo.includes(searchTerm) ||
     patient.billNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (patient.email && patient.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    (patient.email && patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
   );
 
+  // console.log(filteredPatients.ptName);
 
   const handleEditPatient = (formData: FormData) => {
     if (!editingPatient) return;
@@ -87,11 +92,11 @@ export function PatientsTab() {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order Date</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
+                {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th> */}
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone No</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bill No</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">R Power</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">L Power</th>
+                {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">R Power</th> */}
+                {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">L Power</th> */}
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -99,7 +104,8 @@ export function PatientsTab() {
               {filteredPatients.map((patient) => (
                 <tr key={patient.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(patient.orderDate).toLocaleDateString()}
+                    {/* {new Date(patient.orderDate).toLocaleDateString()} */}
+                    {patient.date}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-3">
@@ -107,7 +113,7 @@ export function PatientsTab() {
                         <User className="h-4 w-4 text-teal-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{patient.fullName}</p>
+                        <p className="text-sm font-medium text-gray-900">{patient.ptName}</p>
                         {patient.email && (
                           <p className="text-xs text-gray-500">{patient.email}</p>
                         )}
@@ -115,21 +121,21 @@ export function PatientsTab() {
                     </div>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{patient.age}</td>
-                  <td className="px-4 py-4 whitespace-nowrap">
+                  {/* <td className="px-4 py-4 whitespace-nowrap">
                     <span className="capitalize text-sm text-gray-900">{patient.gender}</span>
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{patient.phone}</td>
+                  </td> */}
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{patient.phoneNo}</td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
                       {patient.billNo}
                     </span>
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {patient.rightPower || '-'}
+                  {/* <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {patient.rPower || '-'}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {patient.leftPower || '-'}
-                  </td>
+                    {patient.lPower || '-'}
+                  </td> */}
                   <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-2">
                       <button
