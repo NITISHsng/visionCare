@@ -17,11 +17,6 @@ export default function LoginPage() {
   const redirectTo = searchParams.get('redirect') || '/';
   const { login, isLoading } = useAuth(); // Use isLoading from useAuth
 
-  // Check if user is already logged in - This logic will be handled by AuthContext
-  useEffect(() => {
-    // No need to manually check localStorage here, AuthContext handles session
-    // If user is already logged in, AuthContext will redirect
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,27 +29,16 @@ export default function LoginPage() {
       if (redirectTo !== '/') {
         router.push(redirectTo);
       } else {
-        // AuthContext should handle role-based redirection after successful login
-        // For now, just redirect to home if redirectTo is '/'
+  
         router.push('/');
       }
     } else {
       setError('Invalid email or password');
     }
-    // finally {
-    //   setIsLoading(false); // No need for local setIsLoading
-    // }
+
   };
 
-  const handleDemoLogin = (role: 'admin' | 'operator') => {
-    if (role === 'admin') {
-      setEmail('admin@kachakali.com');
-      setPassword('password123');
-    } else {
-      setEmail('operator@kachakali.com');
-      setPassword('password123');
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 flex items-center justify-center p-4">
@@ -113,25 +97,6 @@ export default function LoginPage() {
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-
-        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-          <p className="text-sm text-gray-600 mb-3">Demo Credentials:</p>
-          <div className="space-y-2">
-            <button
-              onClick={() => handleDemoLogin('admin')}
-              className="w-full text-left p-2 bg-blue-50 hover:bg-blue-100 rounded text-xs transition-colors"
-            >
-              <strong>Admin:</strong> admin@kachakali.com / password123
-            </button>
-            <button
-              onClick={() => handleDemoLogin('operator')}
-              className="w-full text-left p-2 bg-green-50 hover:bg-green-100 rounded text-xs transition-colors"
-            >
-              <strong>Operator:</strong> operator@kachakali.com / password123
-            </button>
-          </div>
-        </div>
-
         <div className="mt-4 text-center">
           <button
             onClick={() => router.push('/')}

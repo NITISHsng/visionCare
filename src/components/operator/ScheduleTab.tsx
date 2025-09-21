@@ -2,10 +2,9 @@
 
 import React, { useState } from 'react';
 import { Calendar, Clock, Users, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useAppointments } from '@/src/hooks/useAppointments';
-
+import { useDashboardData } from '@/src/contexts/dataCollection';
 export function ScheduleTab() {
-  const { appointments } = useAppointments();
+  const { appointments } = useDashboardData();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const formatDate = (date: Date) => {

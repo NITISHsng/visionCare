@@ -10,7 +10,7 @@ import {
   Search,
   CheckCircle,
 } from "lucide-react";
-import { useAppointments } from "@/src/hooks/useAppointments";
+// import { useAppointments } from "@/src/hooks/useAppointments";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import AppointmentForm from "@/src/components/AppointmentForm";
 import { Appointment } from "@/src/contexts/type";
@@ -19,7 +19,7 @@ export function AppointmentsTab() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const { appointments } = useDashboardData();
-  const { deleteAppointment } = useAppointments();
+  // const { deleteAppointment } = useAppointments();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
@@ -259,17 +259,22 @@ const handleStatusChange = (appointment: Appointment, newStatus: string) => {
 
               <div className="flex justify-between space-x-2">
                 <button
-                  onClick={() => deleteAppointment(appointment.id)}
+                  // onClick={() => deleteAppointment(appointment.id)}
                   className="px-3 py-1 text-red-600 hover:text-red-800 text-sm font-medium transition-colors"
                 >
                   Delete
                 </button>
+                {
+                  appointment.status !== "completed" && (
+
                 <button
                   onClick={() => saveAppointment(appointment.id)}
                   className="px-3 py-1 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors"
                 >
                   Save
                 </button>
+                  )
+                }
               </div>
             </div>
           );

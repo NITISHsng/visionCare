@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Eye, Plus, Search, Clock, DollarSign,CheckCircle } from 'lucide-react';
-import { useServices } from '@/src/hooks/useServices';
+// import { useServices } from '@/src/hooks/useServices';
 import { Service } from "@/src/contexts/type"; // your Service type
 import { initialService } from '@/src/contexts/type'; // initialService object
 import { useDashboardData } from '@/src/contexts/dataCollection';
@@ -10,7 +10,7 @@ export function ServicesTab() {
   const [showServiceForm, setShowServiceFrom] = useState(false);
   const [serviceAddSuccess, setServiceAddSuccess] = useState(false);
   const {services}=useDashboardData();
-  const { deleteService } = useServices();
+  // const { deleteService } = useDashboardData();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [serviceForm, setServiceForm] = useState<Service>(initialService);

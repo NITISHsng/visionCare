@@ -5,16 +5,21 @@ import {
  Clock, Phone, Mail, MapPin, Eye, CheckCircle, 
   Stethoscope, Shield, Award 
 } from 'lucide-react';
-import { useServices } from '@/src/hooks/useServices';
+// import { useServices } from '@/src/hooks/useServices';
 import PatientForms from './AppointmentForm';
-
+import { useDashboardData } from '../contexts/dataCollection';
 interface PatientPortalProps {
   onGoToAdmin: () => void;
 }
 
 export function PatientPortal({ onGoToAdmin }: PatientPortalProps) {
-  const { services, loading: servicesLoading } = useServices();
-
+  const { services} = useDashboardData();
+let servicesLoading=false;
+if(services.length){
+  servicesLoading=false;}else{
+    servicesLoading=false
+  }
+  
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
@@ -99,7 +104,7 @@ export function PatientPortal({ onGoToAdmin }: PatientPortalProps) {
 
           {servicesLoading ? (
             <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500">Loading...</div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
