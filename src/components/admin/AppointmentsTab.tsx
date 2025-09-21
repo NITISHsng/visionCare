@@ -24,10 +24,8 @@ export function AppointmentsTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
 
-  // Track local edits for status
-  const [editedAppointments, setEditedAppointments] = useState<{
-    [id: string]: Appointment;
-  }>({});
+  // Track local edits for status as an array
+  const [editedAppointments, setEditedAppointments] = useState<Appointment[]>([]);
 
   const filteredAppointments = appointments.filter((appointment) => {
     const matchesStatus =
@@ -41,16 +39,26 @@ export function AppointmentsTab() {
   });
 
   // Track status changes locally
-  const handleStatusChange = (appointment: Appointment[], newStatus: string) => {
-    setEditedAppointments((prev) => ({
-      ...prev,
-      [appointment.id]: { ...appointment, status: newStatus },
-    }));
+const handleStatusChange = (appointment: Appointment, newStatus: string) => {
+  const updated: Appointment = { 
+    ...appointment, 
+    status: newStatus as Appointment["status"] // ✅ cast here
   };
+
+  setEditedAppointments((prev) => {
+    const exists = prev.find((a) => a.id === appointment.id);
+    if (exists) {
+      return prev.map((a) => (a.id === appointment.id ? updated : a));
+    } else {
+      return [...prev, updated];
+    }
+  });
+};
+
 
   // Save entire appointment document
   const saveAppointment = async (id: string) => {
-    const updatedAppointment = editedAppointments[id];
+    const updatedAppointment = editedAppointments.find((a) => a.id === id);
     if (!updatedAppointment) return;
 
     try {
@@ -65,6 +73,9 @@ export function AppointmentsTab() {
       const data = await res.json();
       console.log("Appointment updated:", data);
       alert("Saved successfully!");
+
+      // Remove from local edits after save
+      // setEditedAppointments((prev) => prev.filter((a) => a.id !== id));
 
     } catch (err) {
       console.error("Error updating appointment:", err);
@@ -181,7 +192,7 @@ export function AppointmentsTab() {
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredAppointments.map((appointment) => {
           const editedAppointment =
-            editedAppointments[appointment.id] ?? appointment;
+            editedAppointments.find((a) => a.id === appointment.id) ?? appointment;
 
           return (
             <div

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCollection } from "@/lib/mongodb";
-import { Appointment, Patient, initialPatient } from "@/src/contexts/type";
+import { Appointment, PatientFullType, initialPatient } from "@/src/contexts/type";
 
 export async function PUT(req: Request) {
   try {
@@ -46,18 +46,25 @@ export async function PUT(req: Request) {
     }
 
     // Only insert into patients if status is confirmed or completed
-    if (status === "confirmed" || status === "completed") {
-      const patientsColl = await getCollection<Patient>("patients");
+if (status === "confirmed" || status === "completed") {
+  const patientsColl = await getCollection<PatientFullType>("patients");
 
-      // Merge with initialPatient template
-      const patientToInsert: Patient = {
-        ...initialPatient,
-        ...updatedAppointment,
-        // status, // ensure status is up-to-date
-      };
+  // Check if patient already exists
+  const existingPatient = await patientsColl.findOne({ id });
+  if (!existingPatient) {
+    const today = new Date();
+    const formattedDate = `${String(today.getDate()).padStart(2,'0')}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getFullYear()).slice(-2)}`;
 
-      await patientsColl.insertOne(patientToInsert);
-    }
+    const patientToInsert: PatientFullType = {
+      ...initialPatient,
+      ...updatedAppointment,
+      orderDate: formattedDate,
+    };
+
+    await patientsColl.insertOne(patientToInsert);
+  }
+}
+
 
     return NextResponse.json({ success: true, data: updatedAppointment });
   } catch (error: unknown) {

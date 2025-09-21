@@ -2,18 +2,28 @@
 
 import React from 'react';
 import { 
-  Users, Calendar, Eye, TrendingUp, Clock, CheckCircle, 
-  AlertCircle, XCircle 
+  Users, Calendar, Eye, Clock, CheckCircle, 
+ XCircle 
 } from 'lucide-react';
 
+ import { IndianRupee, CreditCard, Wallet } from "lucide-react";
 
-import { usePatients } from '@/src/hooks/usePatients';
+
 import { useDashboardData } from '@/src/contexts/dataCollection';
 export function DashboardOverview() {
   const {staffs,appointments,patients}=useDashboardData();
-  // const { appointments } = useAppointments();
-  // const { patients } = usePatients();
-console.log(patients)
+
+const { totalAdvance, totalDue, totalAmount } = patients.reduce(
+  (acc, patient) => {
+    acc.totalAdvance += patient.advance ?? 0;
+    acc.totalDue += patient.due ?? 0;
+    acc.totalAmount += patient.total ?? 0;
+    return acc;
+  },
+  { totalAdvance: 0, totalDue: 0, totalAmount: 0 }
+);
+
+
   const stats = {
     totalPatients: patients.length,
     totalOperators: staffs.length,
@@ -37,6 +47,44 @@ console.log(patients)
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+         {/* Total Amount */}
+  <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600">Total Amount</p>
+        <p className="text-2xl font-bold text-gray-900">{totalAmount}</p>
+      </div>
+      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+        <IndianRupee className="h-6 w-6 text-blue-600" />
+      </div>
+    </div>
+  </div>
+
+  {/* Total Collection */}
+  <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600">Total Collection</p>
+        <p className="text-2xl font-bold text-gray-900">{totalAdvance}</p>
+      </div>
+      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+        <CreditCard className="h-6 w-6 text-green-600" />
+      </div>
+    </div>
+  </div>
+
+  {/* Total Due */}
+  <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600">Total Due</p>
+        <p className="text-2xl font-bold text-gray-900">{totalDue}</p>
+      </div>
+      <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+        <Wallet className="h-6 w-6 text-red-600" />
+      </div>
+    </div>
+  </div>
         <div className="bg-white rounded-lg p-6 border border-gray-200">
           <div className="flex items-center justify-between">
             <div>

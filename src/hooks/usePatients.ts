@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 import { Patient } from '@/types';
-
 // Mock patients data
 const MOCK_PATIENTS: Patient[] = [
   {
     id: '1',
     fullName: 'John Doe',
     age: 35,
+    email:"sdsdasd@gmail.com",
     gender: 'male',
     phone: '+91 9876543210',
-    email: 'john.doe@email.com',
+    // email: 'john.doe@email.com',
     address: '123 Main Street, Kachakali',
     medicalHistory: 'Myopia, previous eye surgery in 2020',
     emergencyContact: '+91 9876543220',
@@ -28,8 +28,9 @@ const MOCK_PATIENTS: Patient[] = [
     fullName: 'Jane Smith',
     age: 28,
     gender: 'female',
+    email:"sdsdasd@gmail.com",
     phone: '+91 9876543211',
-    email: 'jane.smith@email.com',
+    // email: 'jane.smith@email.com',
     address: '456 Oak Avenue, Kachakali',
     medicalHistory: 'No significant medical history',
     emergencyContact: '+91 9876543221',
