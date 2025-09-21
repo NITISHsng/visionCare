@@ -123,7 +123,6 @@ export function PatientsTab() {
                           className="text-teal-600 hover:text-teal-800 p-1 rounded transition-colors"
                           title="Edit Patient"
                         >
-                          {patient.id}
                           <Edit className="h-4 w-4" />
                         </button>
                       </Link>

@@ -47,38 +47,41 @@ const EditPage = () => {
     );
   };
 
-  const handleSave = async () => {
-    console.log(formData);
-    try {
-      setSaving(true);
+const handleSave = async () => {
+  try {
+    setSaving(true);
 
-      // calculate due safely without mutating state
-      const updatedFormData = {
-        ...formData,
-        due: (formData.total ?? 0) - (formData.advance ?? 0),
-      };
+    // prepare safe copy without mutating state
+    const updatedFormData = {
+      ...formData,
+      updatedAt: new Date().toISOString(),
+      due: (formData.total ?? 0) - (formData.advance ?? 0),
+    };
 
-      const res = await fetch(`/api/patient?id=${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ _id: id, ...updatedFormData }),
-      });
+    if (!id) throw new Error("Missing patient ID");
 
-      if (!res.ok) throw new Error("Failed to save");
+    const res = await fetch(`/api/patient?id=${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ _id: id, ...updatedFormData }),
+    });
 
-      const data = await res.json();
-      console.log("Updated successfully:", data);
-      alert("Saved successfully!");
+    if (!res.ok) throw new Error("Failed to save");
 
-      // ✅ update local state so UI reflects saved changes
-      setFormData(updatedFormData);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to save");
-    } finally {
-      setSaving(false);
-    }
-  };
+    const data = await res.json();
+    console.log("Updated successfully:", data);
+    alert("Saved successfully!");
+
+    // ✅ update local state
+    setFormData(updatedFormData);
+  } catch (err) {
+    console.error("Save failed:", err);
+    alert("Failed to save");
+  } finally {
+    setSaving(false);
+  }
+};
+
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-10">

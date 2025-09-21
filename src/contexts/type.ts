@@ -6,7 +6,10 @@ export type Staff = {
   role?: "admin" | "operator";  // Staff role
   createdAt?: string;  // Date added
   password:string;
+   isActive: boolean;
+  updatedAt: string;       // Full name
 };
+
 
 export const initialStaff: Staff = {
   id: "",
@@ -15,8 +18,27 @@ export const initialStaff: Staff = {
   phone: "",
   role: "operator",
   createdAt: new Date().toISOString(),
-  password:"password"
+  password:"password",
+  updatedAt:"",
+   isActive: false
 };
+export type User ={
+  id: string;
+  email: string;
+  name: string;
+  role: 'admin' | 'operator';
+  phone?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;       // Full name
+  password:string;
+}
+export type AuthContextType= {
+  user: User | null;
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => void;
+  isLoading: boolean;
+}
 
 export type Service = {
   name: string;
@@ -38,7 +60,7 @@ export const initialService: Service = {
   category: "", // default category
   isActive: true,           // default active
   maxDiscouunt:0,
-    createdAt:"",
+    createdAt:new Date().toISOString(),
     updatedAt:"",
 };
 
@@ -71,7 +93,7 @@ export const initialAppointment: Appointment = {
   status: "pending",
   notes: "",
   assignedOperator: "",
-  createdAt: "",
+  createdAt:new Date().toISOString(),
   updatedAt: "",
   gender:"m",
 };
@@ -111,7 +133,6 @@ export type Patient =  {
   opticalTotal?: number;
   location?:string;
 };
-
 
 
 export type PatientFullType = Appointment & Patient;

@@ -4,12 +4,13 @@ export async function GET() {
   try {
     const client = await clientPromise;
     const db = client.db();
-    const [staff,appointments,services,patients] = await Promise.all([
-      db.collection("staff").find({}).sort({ createdAt: -1 }).toArray(),
-      db.collection("appointments").find({}).sort({ createdAt: -1 }).toArray(),
-      db.collection("services").find({}).sort({ createdAt: -1 }).toArray(),
-      db.collection("patients").find({}).sort({ createdAt: -1 }).toArray(),
-    ]);
+  const [staff, appointments, services, patients] = await Promise.all([
+  db.collection("staff").find({}).sort({ createdAt: -1 }).toArray(),
+  db.collection("appointments").find({}).sort({ preferredDate: -1 }).toArray(), // 🔹 sort by preferredDate
+  db.collection("services").find({}).sort({ createdAt: -1 }).toArray(),
+  db.collection("patients").find({}).sort({ createdAt: -1 }).toArray(),
+]);
+
 
     return NextResponse.json({
       staff,

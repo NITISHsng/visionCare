@@ -7,7 +7,7 @@ export function useDashboardData() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [patients, setPatients] = useState<PatientFullTypeWithObjectId[]>([]);
-  console.log(patients);
+
   useEffect(() => {
     async function fetchData() {
       try {
