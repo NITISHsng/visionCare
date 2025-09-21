@@ -2,13 +2,11 @@
 
 import React from 'react';
 import { 
-  Users, Calendar, Eye, Clock, CheckCircle, 
+  Users,ShieldCheck, Calendar, Clock, CheckCircle, 
  XCircle 
 } from 'lucide-react';
 
  import { IndianRupee, CreditCard, Wallet } from "lucide-react";
-
-
 import { useDashboardData } from '@/src/contexts/dataCollection';
 export function DashboardOverview() {
   const {staffs,appointments,patients}=useDashboardData();
@@ -104,7 +102,7 @@ const { totalAdvance, totalDue, totalAmount } = patients.reduce(
               <p className="text-2xl font-bold text-gray-900">{staffs.length}</p>
             </div>
             <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
-              <Eye className="h-6 w-6 text-teal-600" />
+              <ShieldCheck className="h-6 w-6 text-teal-600" />
             </div>
           </div>
         </div>

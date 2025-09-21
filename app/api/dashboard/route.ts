@@ -6,9 +6,9 @@ export async function GET() {
     const db = client.db();
   const [staff, appointments, services, patients] = await Promise.all([
   db.collection("staff").find({}).sort({ createdAt: -1 }).toArray(),
-  db.collection("appointments").find({}).sort({ preferredDate: -1 }).toArray(), // 🔹 sort by preferredDate
+  db.collection("appointments").find({}).sort({ createdAt: -1 }).toArray(), // 🔹 sort by preferredDate
   db.collection("services").find({}).sort({ createdAt: -1 }).toArray(),
-  db.collection("patients").find({}).sort({ createdAt: -1 }).toArray(),
+  db.collection("patients").find({}).sort({ updatedAt: -1 }).toArray(),
 ]);
 
 

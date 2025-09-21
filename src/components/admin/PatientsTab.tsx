@@ -46,25 +46,25 @@ export function PatientsTab() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Order Date
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Patient Name
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Age
                 </th>
                 {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th> */}
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Phone No
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Bill No
                 </th>
                 {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">R Power</th> */}
                 {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">L Power</th> */}
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -75,11 +75,11 @@ export function PatientsTab() {
                   key={patient.id}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
                     {/* {new Date(patient.orderDate).toLocaleDateString()} */}
                     {patient.date}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
+                  <td className="px-2 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
                         <User className="h-4 w-4 text-teal-600" />
@@ -96,16 +96,16 @@ export function PatientsTab() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
                     {patient.age}
                   </td>
                   {/* <td className="px-4 py-4 whitespace-nowrap">
                     <span className="capitalize text-sm text-gray-900">{patient.gender}</span>
                   </td> */}
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
                     {patient.phoneNo}
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
+                  <td className="px-2 py-4 whitespace-nowrap">
                     <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
                       {patient.billNo}
                     </span>
@@ -116,7 +116,7 @@ export function PatientsTab() {
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                     {patient.lPower || '-'}
                   </td> */}
-                  <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-2 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-2">
                       <Link href={`edit/${patient._id}`}>
                         <button

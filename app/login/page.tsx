@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, Lock, Mail, AlertCircle } from 'lucide-react';
-import { validateUser } from '@/src/middleware/auth';
+// import { validateUser } from '@/src/middleware/auth';
 import { useAuth } from '@/src/contexts/AuthContext'; // Import useAuth
 
 export default function LoginPage() {

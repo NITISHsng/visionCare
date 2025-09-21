@@ -1,16 +1,16 @@
+
 import { NextResponse } from "next/server";
 import { getCollection } from "@/lib/mongodb";
-import { Staff } from "@/src/contexts/type"; // Corrected import path
+import { Staff } from "../../../src/contexts/type";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { email, password } = body;
+    const body: Staff = await req.json();
 
     // ✅ Validate user input
-    if (!email || !password) {
+    if (!body.name || !body.phone || !body.role) {
       return NextResponse.json(
-        { success: false, error: "Missing email or password" },
+        { success: false, error: "Missing required fields: patient name or phone number" },
         { status: 400 }
       );
     }
@@ -18,21 +18,14 @@ export async function POST(req: Request) {
     // ✅ Get collection
     const collection = await getCollection<Staff>("staff");
 
-    // ✅ Find staff by email and password
-    const staffMember = await collection.findOne({ email, password });
 
-    if (staffMember) {
-      // Exclude sensitive information like password before sending to client
-      const { password, ...userWithoutPassword } = staffMember;
-      return NextResponse.json({ success: true, user: userWithoutPassword });
-    } else {
-      return NextResponse.json(
-        { success: false, error: "Invalid email or password" },
-        { status: 401 }
-      );
-    }
+    const result = await collection.insertOne({
+      ...body,
+    });
+
+    return NextResponse.json({ success: true, id: result.insertedId });
   } catch (error: unknown) {
-    console.error("Error in api/staff:", error);
+    console.error("Error in api:", error);
 
     const message = error instanceof Error ? error.message : "Internal server error";
 

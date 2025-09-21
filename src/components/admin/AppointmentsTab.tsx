@@ -199,34 +199,52 @@ const handleStatusChange = (appointment: Appointment, newStatus: string) => {
               key={appointment.id}
               className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow"
             >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {appointment.ptName}
-                  </h3>
-                  <p className="text-sm text-gray-500">Age: {appointment.age}</p>
-                </div>
-                <select
-                  value={editedAppointment.status}
-                  onChange={(e) =>
-                    handleStatusChange(appointment, e.target.value)
-                  }
-                  className={`text-xs rounded-full px-3 py-1 font-medium border-0 focus:ring-2 focus:ring-teal-500 ${
-                    editedAppointment.status === "pending"
-                      ? "bg-orange-100 text-orange-700"
-                      : editedAppointment.status === "confirmed"
-                      ? "bg-green-100 text-green-700"
-                      : editedAppointment.status === "completed"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="confirmed">Confirmed</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </div>
+<div className="flex items-start justify-between mb-4">
+  <div>
+    <h3 className="text-lg font-semibold text-gray-900">
+      {appointment.ptName}
+    </h3>
+    <p className="text-sm text-gray-500">Age: {appointment.age}</p>
+  </div>
+
+  <select
+    value={editedAppointment.status}
+    onChange={(e) => handleStatusChange(appointment, e.target.value)}
+    className={`text-xs rounded-full px-3 py-1 font-medium border-0 focus:ring-2 focus:ring-teal-500 ${
+      editedAppointment.status === "pending"
+        ? "bg-orange-100 text-orange-700"
+        : editedAppointment.status === "confirmed"
+        ? "bg-green-100 text-green-700"
+        : editedAppointment.status === "completed"
+        ? "bg-blue-100 text-blue-700"
+        : "bg-red-100 text-red-700"
+    }`}
+  >
+    {/* Show options based on status */}
+    {["pending", "cancelled"].includes(editedAppointment.status) && (
+      <>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </>
+    )}
+
+    {editedAppointment.status === "confirmed" && (
+      <>
+        <option value="confirmed">Confirmed</option>
+        <option value="completed">Completed</option>
+      </>
+    )}
+
+    {editedAppointment.status === "completed" && (
+      <>
+         <option value="completed">Completed</option>
+      </>
+    )}
+  </select>
+</div>
+
 
               <div className="space-y-2 mb-4">
                 <div className="flex items-center space-x-2 text-sm text-gray-600">

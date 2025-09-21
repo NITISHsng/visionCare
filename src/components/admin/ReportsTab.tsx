@@ -2,8 +2,6 @@
 
 import React from 'react';
 import { BarChart3, TrendingUp, Calendar, Users, Download } from 'lucide-react';
-// import { useAppointments } from '@/src/hooks/useAppointments';
-// import { usePatients } from '@/src/hooks/usePatients';
 import { useDashboardData } from '@/src/contexts/dataCollection';
 export function ReportsTab() {
   const { appointments } = useDashboardData();
@@ -13,6 +11,7 @@ export function ReportsTab() {
     totalAppointments: appointments.length,
     completedAppointments: appointments.filter(apt => apt.status === 'completed').length,
     pendingAppointments: appointments.filter(apt => apt.status === 'pending').length,
+    confirmAppointments: appointments.filter(apt => apt.status === 'confirmed').length,
     cancelledAppointments: appointments.filter(apt => apt.status === 'cancelled').length,
     totalPatients: patients.length,
     thisWeekAppointments: appointments.filter(apt => {
@@ -103,6 +102,18 @@ export function ReportsTab() {
                   <div 
                     className="bg-green-500 h-2 rounded-full"
                     style={{ width: `${(stats.completedAppointments / stats.totalAppointments) * 100}%` }}
+                  ></div>
+                </div>
+                <span className="text-sm font-medium text-gray-900">{stats.completedAppointments}</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-700">Completed</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-24 bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-yellow-400 h-2 rounded-full"
+                    style={{ width: `${(stats.confirmAppointments / stats.totalAppointments) * 100}%` }}
                   ></div>
                 </div>
                 <span className="text-sm font-medium text-gray-900">{stats.completedAppointments}</span>

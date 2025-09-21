@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Eye, Plus, Search, Clock, DollarSign,CheckCircle } from 'lucide-react';
+import { Eye, Plus, Search, Clock, IndianRupee,CheckCircle } from 'lucide-react';
 // import { useServices } from '@/src/hooks/useServices';
 import { Service } from "@/src/contexts/type"; // your Service type
 import { initialService } from '@/src/contexts/type'; // initialService object
@@ -130,7 +130,7 @@ export function ServicesTab() {
 
             <div className="space-y-2 mb-4">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <DollarSign className="h-4 w-4" />
+                <IndianRupee className="h-4 w-4" />
                 <span>₹{service.price}</span>
               </div>
               <div className="flex items-center space-x-2 text-sm text-gray-600">
