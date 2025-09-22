@@ -1,5 +1,5 @@
 // Authentication middleware for role-based access control
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 export interface User {
   id: string;
