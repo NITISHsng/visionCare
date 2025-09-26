@@ -99,6 +99,7 @@ const handleSave = async () => {
             </label>
             <input
               name="ptName"
+              readOnly
               value={formData.ptName}
               onChange={handleChange}
               className="w-full border p-2 rounded"
@@ -112,6 +113,7 @@ const handleSave = async () => {
             <input
               name="age"
               type="number"
+              // readOnly
               value={formData.age}
               onChange={handleChange}
               className="w-full border p-2 rounded"
@@ -124,6 +126,7 @@ const handleSave = async () => {
             </label>
             <input
               name="phoneNo"
+              // readOnly
               value={formData.phoneNo}
               onChange={handleChange}
               className="w-full border p-2 rounded"
@@ -136,6 +139,7 @@ const handleSave = async () => {
             </label>
             <input
               name="email"
+              // readOnly
               value={formData.email}
               onChange={handleChange}
               className="w-full border p-2 rounded"
@@ -148,6 +152,7 @@ const handleSave = async () => {
             </label>
             <select
               name="gender"
+              disabled
               value={formData.gender}
               onChange={handleChange}
               className="w-full border p-2 rounded"
@@ -164,6 +169,7 @@ const handleSave = async () => {
             </label>
             <select
               name="status"
+              disabled
               value={formData.status}
               onChange={handleChange}
               className="w-full border p-2 rounded"

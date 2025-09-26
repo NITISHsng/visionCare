@@ -7,7 +7,6 @@ import { initialStaff } from '../../contexts/type';
 import { useDashboardData } from '@/src/contexts/dataCollection';
 export function OperatorsTab() {
   const {staffs}=useDashboardData();
-  console.log(staffs);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [saveSuccessfully, setSaveSuccessfully] = useState(false);
