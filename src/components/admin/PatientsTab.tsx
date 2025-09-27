@@ -75,7 +75,7 @@ export function PatientsTab() {
                   key={patient.id}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {/* {new Date(patient.orderDate).toLocaleDateString()} */}
                    
                     <span className="flex justifu-center items-center">
@@ -92,7 +92,7 @@ export function PatientsTab() {
                     </span>
 
                   </td>
-                  <td className="px-2 py-4 whitespace-nowrap">
+                  <td className="px-2 py-3 whitespace-nowrap">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
                         <User className="h-4 w-4 text-teal-600" />
@@ -109,27 +109,27 @@ export function PatientsTab() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {patient.age}
                   </td>
-                  {/* <td className="px-4 py-4 whitespace-nowrap">
+                  {/* <td className="px-4 py-3 whitespace-nowrap">
                     <span className="capitalize text-sm text-gray-900">{patient.gender}</span>
                   </td> */}
-                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     {patient.phoneNo}
                   </td>
-                  <td className="px-2 py-4 whitespace-nowrap">
+                  <td className="px-2 py-3 whitespace-nowrap">
                     <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
                       {patient.billNo}
                     </span>
                   </td>
-                  {/* <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {/* <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {patient.rPower || '-'}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                     {patient.lPower || '-'}
                   </td> */}
-                  <td className="px-2 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-2 py-3 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center space-x-2">
                       <Link href={`edit/${patient._id}`}>
                         <button
