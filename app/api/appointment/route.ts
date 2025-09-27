@@ -115,16 +115,6 @@ export async function POST(req: Request) {
     // ✅ Insert appointment
     const result = await appointmentsColl.insertOne(appointmentData);
 
-    // ✅ If patient doesn't exist, create a new patient record
-    if (!existingPatient) {
-      await patientsColl.insertOne({
-        ptName: body.ptName,
-        phoneNo: body.phoneNo,
-        email: body.email,
-        createdAt: now,
-        updatedAt: now,
-      } as PatientFullType);
-    }
 
     return NextResponse.json({
       success: true,

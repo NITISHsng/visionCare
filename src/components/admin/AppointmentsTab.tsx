@@ -22,7 +22,8 @@ export function AppointmentsTab() {
   // const { deleteAppointment } = useAppointments();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
+const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+const [dateFilter, setDateFilter] = useState(today);
 
   // Track local edits for status as an array
   const [editedAppointments, setEditedAppointments] = useState<Appointment[]>([]);
