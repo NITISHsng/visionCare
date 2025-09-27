@@ -15,7 +15,7 @@ const { totalAdvance, totalDue, totalAmount } = patients.reduce(
   (acc, patient) => {
     acc.totalAdvance += patient.advance ?? 0;
     acc.totalDue += patient.due ?? 0;
-    acc.totalAmount += patient.total ?? 0;
+    acc.totalAmount += patient.totalAmount ?? 0;
     return acc;
   },
   { totalAdvance: 0, totalDue: 0, totalAmount: 0 }

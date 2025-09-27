@@ -75,7 +75,7 @@ export type Appointment = {
   purpose: "eye-test" | "frame-selection" | "consultation" | "follow-up";
   status: "pending" | "confirmed" | "completed" | "cancelled";
   notes?: string;
-  assignedOperator?: string;
+  // assignedOperator?: string;
   createdAt: string;
   updatedAt: string;
   repeated:boolean;
@@ -93,7 +93,7 @@ export const initialAppointment: Appointment = {
   purpose: "eye-test",
   status: "pending",
   notes: "",
-  assignedOperator: "",
+  // assignedOperator: "",
   createdAt:new Date().toISOString(),
   updatedAt: "",
   gender:"m",
@@ -101,41 +101,89 @@ export const initialAppointment: Appointment = {
 };
 
 
-export type Patient =  {
-  orderDate: string;          // Order date (DD/MM/YY)               // Age of patient
-  billNo: string;             // Bill number (unique)
-  date:string;
-  // Eye power / prescription
-  rPower: string;             // Right eye power
-  lPower: string;             // Left eye power
-  cylinderR?: string;         // Right eye cylinder (if astigmatism)
-  cylinderL?: string;         // Left eye cylinder
-  axisR?: string;             // Right eye axis
-  axisL?: string;             // Left eye axis
-  addPowerR?: string;         // Right eye near addition
-  addPowerL?: string;         // Left eye near addition
-
-  // Medical details
-  diagnosis?: string;         // Eye problem (e.g., myopia, hyperopia, cataract)
-  doctorName?: string;        // Doctor/Optometrist name
-  prescriptionDate?: string;  // Prescription date
-  remarks?: string;           // Extra notes
-  
-  // Order details
-  vendor?: string;
-  rate?: number;
-  frame?: number;
-  lens?: number;
-  total?: number;
-  discount: number;
+export type Patient = {
+  // Billing / Order Info
+  date: string;
+  orderDate: string;
+  billNo: string;
+  totalAmount: number;
   advance: number;
   due: number;
-  received: number;
-  deliveryDate?: string;
-  opticalTotal?: number;
-  location?:string;
-};
+  deliveryDate: string;
 
+  // Medical Info
+  primaryWorkupBy: string;
+  presentComplaints: string[];
+  iopPachyCCT: {
+    rightEye: {
+      methodTime: string;
+      iop: number;
+      correctedIop?: number;
+      cct?: number;
+    };
+    leftEye: {
+      methodTime: string;
+      iop: number;
+      correctedIop?: number;
+      cct?: number;
+    };
+  };
+  vision: {
+    rightEye: {
+      unaidedDistance: string;
+      unaidedNear?: string;
+      bestCorrectedDistance?: string;
+      bestCorrectedNear?: string;
+    };
+    leftEye: {
+      unaidedDistance: string;
+      unaidedNear?: string;
+      bestCorrectedDistance?: string;
+      bestCorrectedNear?: string;
+    };
+  };
+  examinedBy: string;
+  examDetails: {
+    adnexa: string;
+    conjunctiva: string;
+    cornea: string;
+    anteriorChamber: string;
+    iris: string;
+    lens: string;
+    fundus: string;
+    orbit: string;
+    syringing: string;
+    vitreous: string;
+  };
+  diagnosis: string[];
+  prescription:string;
+  // prescription: {
+  //   medicine: string;
+  //   dosage: string;
+  //   duration: string;
+  // }[];
+  nextReview: string;
+  doctorRemarks: string;
+  glassesPrescription: {
+    rightEye: {
+      sph: string;
+      cyl?: string;
+      axis?: number;
+      prism?: string;
+      V_A?: string;
+      N_V?: string;
+    };
+    leftEye: {
+      sph: string;
+      cyl?: string;
+      axis?: number;
+      prism?: string;
+      V_A?: string;
+      N_V?: string;
+    };
+    use: string;
+  };
+};
 
 export type PatientFullType = Appointment & Patient;
 export type PatientFullTypeWithObjectId=PatientFullType & {_id?:string};
@@ -143,40 +191,55 @@ export type PatientFullTypeWithObjectId=PatientFullType & {_id?:string};
 const now = new Date();
 const formattedDate = `${String(now.getDate()).padStart(2, "0")}-${String(
   now.getMonth() + 1
-).padStart(2, "0")}-${String(now.getFullYear()).slice(-2)}`; // dd-mm-yy
+).padStart(2, "0")}-${String(now.getFullYear())}`; // dd-mm-yy
 
 export const initialPatient: Patient = {
-  date:formattedDate,
-  orderDate: "",          
+  // Billing Info
+  date: formattedDate,
+  orderDate: "",
   billNo: "",
-
-  rPower: "",
-  lPower: "",
-  cylinderR: "",
-  cylinderL: "",
-  axisR: "",
-  axisL: "",
-  addPowerR: "",
-  addPowerL: "",
-
-  diagnosis: "",
-  doctorName: "",
-  prescriptionDate: "",
-  remarks: "",
-
-  vendor: "",
-  rate: 0,
-  frame: 0,
-  lens: 0,
-  total: 0,
-  discount: 0,
+  totalAmount: 0,
   advance: 0,
   due: 0,
-  received: 0,
   deliveryDate: "",
-  opticalTotal: 0,
-  location:"",
-}; 
+
+  // Medical Info (empty/default values)
+  primaryWorkupBy: "",
+  presentComplaints: [],
+  iopPachyCCT: {
+    rightEye: { methodTime: "", iop: 0 },
+    leftEye: { methodTime: "", iop: 0 },
+  },
+  vision: {
+    rightEye: { unaidedDistance: "" },
+    leftEye: { unaidedDistance: "" },
+  },
+  examinedBy: "",
+  examDetails: {
+    adnexa: "",
+    conjunctiva: "",
+    cornea: "",
+    anteriorChamber: "",
+    iris: "",
+    lens: "",
+    fundus: "",
+    orbit: "",
+    syringing: "",
+    vitreous: "",
+  },
+  diagnosis: [],
+  prescription: "",
+  nextReview: "",
+  doctorRemarks: "",
+  glassesPrescription: {
+    rightEye: { sph: "" },
+    leftEye: { sph: "" },
+    use: "",
+  },
+};
+
+
+
 
 
 export type Vendor = {

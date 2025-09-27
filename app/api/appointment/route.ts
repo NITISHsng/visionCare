@@ -52,8 +52,8 @@ if (status === "confirmed" || status === "completed") {
   // Check if patient already exists
   const existingPatient = await patientsColl.findOne({ id });
   if (!existingPatient) {
-    const today = new Date();
-    const formattedDate = `${String(today.getDate()).padStart(2,'0')}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getFullYear())}`;
+const today = new Date();
+const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
     const patientToInsert: PatientFullType = {
       ...initialPatient,
