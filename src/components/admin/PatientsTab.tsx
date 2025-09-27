@@ -77,7 +77,20 @@ export function PatientsTab() {
                 >
                   <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
                     {/* {new Date(patient.orderDate).toLocaleDateString()} */}
+                   
+                    <span className="flex justifu-center items-center">
+                      {patient.repeated ? (
+                        <span className="flex space-x-1">
+                          <span className="w-3 h-3 rounded-full bg-green-600"></span>
+                        </span>
+                      ) : (
+                      <span className="flex space-x-1">
+                          <span className="w-3 h-3 rounded-full bg-green-300"></span>
+                        </span>
+                      )}
                     {patient.date}
+                    </span>
+
                   </td>
                   <td className="px-2 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-3">

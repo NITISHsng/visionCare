@@ -53,7 +53,7 @@ if (status === "confirmed" || status === "completed") {
   const existingPatient = await patientsColl.findOne({ id });
   if (!existingPatient) {
     const today = new Date();
-    const formattedDate = `${String(today.getDate()).padStart(2,'0')}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getFullYear()).slice(-2)}`;
+    const formattedDate = `${String(today.getDate()).padStart(2,'0')}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getFullYear())}`;
 
     const patientToInsert: PatientFullType = {
       ...initialPatient,
@@ -79,34 +79,58 @@ if (status === "confirmed" || status === "completed") {
     );
   }
 }
-
-
-
 export async function POST(req: Request) {
   try {
     const body: Appointment = await req.json();
 
     // ✅ Validate user input
-    if (!body.ptName || !body.phoneNo) {
+    if (!body.ptName || (!body.phoneNo && !body.email)) {
       return NextResponse.json(
         { success: false, error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // ✅ Get collection
-    const collection = await getCollection<Appointment>("appointments");
+    // ✅ Get collections
+    const appointmentsColl = await getCollection<Appointment>("appointments");
+    const patientsColl = await getCollection<PatientFullType>("patients");
 
-    const now = new Date().toISOString();
-
-    // ✅ Insert appointment
-    const result = await collection.insertOne({
-      ...body,
-      // createdAt: now,
-      // updatedAt: now,
+    // ✅ Check if patient already exists
+    const existingPatient = await patientsColl.findOne({
+      $or: [
+        { ptName: body.ptName, phoneNo: body.phoneNo },
+        { ptName: body.ptName, email: body.email },
+      ],
     });
 
-    return NextResponse.json({ success: true, id: result.insertedId });
+    // ✅ Prepare appointment data
+    const now = new Date().toISOString();
+    const appointmentData: Appointment = {
+      ...body,
+      repeated: !!existingPatient, // true if patient exists
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    // ✅ Insert appointment
+    const result = await appointmentsColl.insertOne(appointmentData);
+
+    // ✅ If patient doesn't exist, create a new patient record
+    if (!existingPatient) {
+      await patientsColl.insertOne({
+        ptName: body.ptName,
+        phoneNo: body.phoneNo,
+        email: body.email,
+        createdAt: now,
+        updatedAt: now,
+      } as PatientFullType);
+    }
+
+    return NextResponse.json({
+      success: true,
+      id: result.insertedId,
+      repeated: !!existingPatient,
+    });
   } catch (error: unknown) {
     console.error("Error in api:", error);
 

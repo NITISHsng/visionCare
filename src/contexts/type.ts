@@ -78,6 +78,7 @@ export type Appointment = {
   assignedOperator?: string;
   createdAt: string;
   updatedAt: string;
+  repeated:boolean;
   gender: "m" | "f" | "other";
 };
 
@@ -96,6 +97,7 @@ export const initialAppointment: Appointment = {
   createdAt:new Date().toISOString(),
   updatedAt: "",
   gender:"m",
+  repeated:false,
 };
 
 

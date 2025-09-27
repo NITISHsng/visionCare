@@ -201,9 +201,9 @@ const handleStatusChange = (appointment: Appointment, newStatus: string) => {
             >
 <div className="flex items-start justify-between mb-4">
   <div>
-    <h3 className="text-lg font-semibold text-gray-900">
-      {appointment.ptName}
-    </h3>
+    <div className="text-lg font-semibold text-gray-900">
+      {appointment.ptName} <span className="text-[10px] text-green-600">{appointment.repeated ?"Repeated":"" }</span>
+    </div>
     <p className="text-sm text-gray-500">Age: {appointment.age}</p>
   </div>
 
