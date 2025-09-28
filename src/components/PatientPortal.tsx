@@ -5,7 +5,6 @@ import {
  Clock, Phone, Mail, MapPin, Eye, CheckCircle, 
   Stethoscope, Shield, Award 
 } from 'lucide-react';
-// import { useServices } from '@/src/hooks/useServices';
 import PatientForms from './AppointmentForm';
 import { useDashboardData } from '../contexts/dataCollection';
 interface PatientPortalProps {

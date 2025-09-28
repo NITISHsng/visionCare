@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar';
 import { DashboardOverview } from './DashboardOverview';
@@ -9,15 +9,25 @@ import { PatientsTab } from './PatientsTab';
 import { OperatorsTab } from './OperatorsTab';
 import { ServicesTab } from './ServicesTab';
 import { ReportsTab } from './ReportsTab';
-
+import { ScheduleTab } from '../operator/ScheduleTab';
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Load saved activeTab from localStorage on mount
+  useEffect(() => {
+    const savedTab = localStorage.getItem('activeTab');
+    if (savedTab) {
+      setActiveTab(savedTab);
+    }
+  }, [activeTab]);
 
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
         return <DashboardOverview />;
+      case 'schedule':
+        return <ScheduleTab/>;
       case 'appointments':
         return <AppointmentsTab />;
       case 'patients':
@@ -35,8 +45,7 @@ export function AdminDashboard() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar 
-        activeTab={activeTab} 
+      <Sidebar  
         onTabChange={setActiveTab}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

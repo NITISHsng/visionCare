@@ -116,6 +116,8 @@ const EditPage = () => {
 
       const data = await res.json();
       console.log("Updated successfully:", data);
+      localStorage.setItem('activeTab', "patients");
+
       alert("Saved successfully!");
 
       setFormData(updatedFormData);

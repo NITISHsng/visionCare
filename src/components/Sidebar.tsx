@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { 
   Calendar, Users, UserPlus, Settings, BarChart3, 
   Eye, FileText, Clock, Shield 
@@ -8,21 +8,44 @@ import {
 import { useAuth } from '@/src/contexts/AuthContext';
 
 interface SidebarProps {
-  activeTab: string;
   onTabChange: (tab: string) => void;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function Sidebar({ activeTab, onTabChange, isOpen, onClose }: SidebarProps) {
+export function Sidebar({ onTabChange, isOpen, onClose }: SidebarProps) {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = React.useState<string>('');
+
+  React.useEffect(() => {
+    try {
+      const savedTab = localStorage.getItem('activeTab');
+      if (savedTab) {
+        setActiveTab(savedTab);
+        onTabChange(savedTab);
+      }
+    } catch (error) {
+      console.error('Error accessing localStorage:', error);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    try {
+      if (activeTab) {
+        localStorage.setItem('activeTab', activeTab);
+      }
+    } catch (error) {
+      console.error('Error accessing localStorage:', error);
+    }
+  }, [activeTab]);
 
   const adminMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'appointments', label: 'Appointments', icon: Calendar },
     { id: 'patients', label: 'Patients', icon: Users },
-    { id: 'operators', label: 'Operators', icon: UserPlus },
     { id: 'services', label: 'Services', icon: Eye },
+    { id: 'schedule', label: 'Schedule', icon: Clock },
+    { id: 'operators', label: 'Operators', icon: UserPlus },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
@@ -73,6 +96,7 @@ export function Sidebar({ activeTab, onTabChange, isOpen, onClose }: SidebarProp
                 <button
                   key={item.id}
                   onClick={() => {
+                    setActiveTab(item.id);
                     onTabChange(item.id);
                     onClose();
                   }}

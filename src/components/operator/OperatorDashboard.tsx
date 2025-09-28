@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar';
 import { DashboardOverview } from '../admin/DashboardOverview';
@@ -10,9 +10,17 @@ import { ScheduleTab } from './ScheduleTab';
 import { ReportsTab } from '../admin/ReportsTab';
 
 export function OperatorDashboard() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
+    const [activeTab, setActiveTab] = useState('dashboard');
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+    // Load saved activeTab from localStorage on mount
+    useEffect(() => {
+      const savedTab = localStorage.getItem('activeTab');
+      if (savedTab) {
+        setActiveTab(savedTab);
+      }
+    }, [activeTab]);
+  
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -33,7 +41,6 @@ export function OperatorDashboard() {
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar 
-        activeTab={activeTab} 
         onTabChange={setActiveTab}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
