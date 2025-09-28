@@ -512,7 +512,7 @@ const EditPage = () => {
       )}
 
       {/* Vision Details Toggle */}
-  <div
+<div
   className={
     isLargeScreen
       ? "hidden"
@@ -1066,7 +1066,7 @@ const EditPage = () => {
       {(isLargeScreen || showDiagnosis) && (
         <div className="space-y-4">
           <h3 className="text-xl font-semibold text-gray-700">Diagnosis</h3>
-          {formData.diagnosis?.map((diagnosisItem, index) => (
+          {(formData.diagnosis || []).map((diagnosisItem, index) => (
             <div key={index} className="flex flex-col gap-2">
               <input
                 type="text"
@@ -1084,10 +1084,7 @@ const EditPage = () => {
           <button
             type="button"
             onClick={() =>
-              handleNestedChange("diagnosis", [
-                ...(formData.diagnosis || []),
-                "",
-              ])
+              handleNestedChange("diagnosis", [...(formData.diagnosis || []), ""])
             }
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
           >
