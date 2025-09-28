@@ -99,7 +99,7 @@ export function ScheduleTab() {
               
               return (
                 <div key={time} className="flex items-center border-b border-gray-100 py-3 last:border-b-0">
-                  <div className="w-20 text-sm font-medium text-gray-600">
+                  <div className="w-10 text-sm font-medium text-gray-600">
                     {time}
                   </div>
                   <div className="flex-1 ml-4">
@@ -116,18 +116,18 @@ export function ScheduleTab() {
                             <p className="text-sm text-gray-600">Age: {appointment.age} • {appointment.phoneNo}</p>
                             <p className="text-sm text-gray-600 capitalize">{appointment.purpose.replace('-', ' ')}</p>
                           </div>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          {/* <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                             appointment.status === 'pending' ? 'bg-orange-100 text-orange-700' :
                             appointment.status === 'confirmed' ? 'bg-green-100 text-green-700' :
                             appointment.status === 'completed' ? 'bg-blue-100 text-blue-700' :
                             'bg-red-100 text-red-700'
                           }`}>
                             {appointment.status}
-                          </span>
+                          </span> */}
                         </div>
-                        {appointment.notes && (
+                        {/* {appointment.notes && (
                           <p className="text-sm text-gray-600 mt-2">{appointment.notes}</p>
-                        )}
+                        )} */}
                       </div>
                     ) : (
                       <div className="p-3 border-2 border-dashed border-gray-200 rounded-lg text-center">

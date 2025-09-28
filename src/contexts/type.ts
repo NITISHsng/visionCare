@@ -22,6 +22,8 @@ export const initialStaff: Staff = {
   updatedAt:"",
    isActive: false
 };
+
+export type staffWithId= Staff & {_id?:string};
 export type User ={
   id: string;
   email: string;
@@ -51,7 +53,7 @@ export type Service = {
   updatedAt:string;
   maxDiscouunt:number;
 };
-
+export type serviceWithId=Service & {_id?:string};
 export const initialService: Service = {
   name: "",
   description: "",

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Appointment } from "../contexts/type";
 import { initialAppointment } from "../contexts/type";
-
+import toast from "react-hot-toast";
 interface PatientFormProps {
   setShowBookingForm: React.Dispatch<React.SetStateAction<boolean>>;
   setBookingSuccess: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,7 +12,7 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
   setBookingSuccess,
 }) => {
   const [formValues, setFormValues] = useState<Appointment>(initialAppointment);
-
+  const [loading, setLoading] = useState(false);
   // handleChange updates state whenever an input changes
   const handleChange = (
     e: React.ChangeEvent<
@@ -42,6 +42,7 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
   const handleBookAppointment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     formValues.id = generateAppointmentId();
+    setLoading(true);
     try {
       const res = await fetch("/api/appointment", {
         method: "POST",
@@ -57,10 +58,11 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
 
       const result = await res.json();
       console.log("Appointment booked:", result);
-
+      toast.success("Appointment Booked Successfully")
+     setLoading(false);
       setBookingSuccess(true);
       setShowBookingForm(false);
-
+      
       setTimeout(() => setBookingSuccess(false), 5000);
     } catch (error) {
       console.error("Error booking appointment:", error);
@@ -193,12 +195,22 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
-            >
-              Book Appointment
-            </button>
+<button
+  type="submit"
+  disabled={loading}
+  className="flex items-center justify-center px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 disabled:opacity-70"
+>
+  {loading ? (
+    <div className="flex items-center space-x-2">
+      <span className="spin"></span>
+      <span>Booking...</span>
+    </div>
+  ) : (
+    "Book Appointment"
+  )}
+</button>
+
+
           </div>
         </form>
       </div>

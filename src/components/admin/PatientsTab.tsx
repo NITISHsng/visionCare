@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Users, Search, Edit, Trash2, User } from "lucide-react";
+import { Users, Search, Edit, Trash2, User ,Eye} from "lucide-react";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import Link from "next/link";
 
@@ -166,10 +166,10 @@ const [dateFilter, setDateFilter] = useState(today);
                         </button>
                       </Link>
                       <button
-                        className="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
+                        className="text-green-600 hover:text-green-800 p-1 rounded transition-colors"
                         title="Delete Patient"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Eye className="h-4 w-4" />
                       </button>
                     </div>
                   </td>

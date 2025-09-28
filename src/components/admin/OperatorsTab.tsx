@@ -1,25 +1,35 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { UserPlus, Mail, Phone, Plus, Search, Shield,CheckCircle } from 'lucide-react';
-import { Staff } from '../../contexts/type';
-import { initialStaff } from '../../contexts/type';
-import { useDashboardData } from '@/src/contexts/dataCollection';
+import React, { useState } from "react";
+import {
+  UserPlus,
+  Mail,
+  Phone,
+  Plus,
+  Search,
+  Shield,
+  CheckCircle,
+} from "lucide-react";
+import { staffWithId } from "../../contexts/type";
+import { initialStaff } from "../../contexts/type";
+import { useDashboardData } from "@/src/contexts/dataCollection";
+import toast from "react-hot-toast";
 export function OperatorsTab() {
-  const {staffs}=useDashboardData();
-  const [searchTerm, setSearchTerm] = useState('');
+  const { staffs } = useDashboardData();
+  const [searchTerm, setSearchTerm] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
   const [saveSuccessfully, setSaveSuccessfully] = useState(false);
 
-  const filteredOperators = staffs.filter(operator => 
-    operator.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    operator.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (operator.phone && operator.phone.includes(searchTerm))
+  const filteredOperators = staffs.filter(
+    (operator) =>
+      operator.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      operator.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (operator.phone && operator.phone.includes(searchTerm))
   );
-
+  const [loading, setLoading] = useState(false);
 
   // Initialize form state
-  const [staffForm, setStaffForm] = useState<Staff>(initialStaff);
+  const [staffForm, setStaffForm] = useState<staffWithId>(initialStaff);
 
   // Handle input/select changes
   const handleChange = (
@@ -35,8 +45,7 @@ export function OperatorsTab() {
   // Handle form submission
   const handleAddOperator = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Staff data to submit:", staffForm);
-
+    setLoading(true);
     // Example: POST to your API
     try {
       const res = await fetch("/api/staff", {
@@ -46,23 +55,44 @@ export function OperatorsTab() {
       });
 
       if (!res.ok) throw new Error("Failed to add staff");
-
+      setLoading(false);
       const result = await res.json();
       setSaveSuccessfully(true);
+      toast.success("Operator Create Successfully!")
       setTimeout(() => setSaveSuccessfully(false), 5000);
       setShowAddForm(false);
-      setStaffForm(initialStaff); 
+      setStaffForm(initialStaff);
     } catch (err) {
       console.error(err);
     }
   };
 
+  const deleteOperator = async (id: string) => {
+    try {
+      const res = await fetch("/api/staff", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!res.ok) throw new Error("Failed to delete service");
+
+      toast.success("Service deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting service:", error);
+      toast.error("Failed to delete service.");
+    } 
+  };
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Operator Management</h1>
-          <p className="text-gray-600">Manage system operators and their access</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Operator Management
+          </h1>
+          <p className="text-gray-600">
+            Manage system operators and their access
+          </p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
@@ -72,12 +102,14 @@ export function OperatorsTab() {
           <span>Add Operator</span>
         </button>
       </div>
-        {/* Success Message */}
+      {/* Success Message */}
       {saveSuccessfully && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-3">
             <CheckCircle className="h-5 w-5 text-green-600" />
-            <span className="text-green-800">Appointment booked successfully! We'll contact you soon to confirm.</span>
+            <span className="text-green-800">
+              Operator Create Successfully!
+            </span>
           </div>
         </div>
       )}
@@ -99,17 +131,24 @@ export function OperatorsTab() {
       {/* Operators Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredOperators.map((operator) => (
-          <div key={operator.id} className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow">
+          <div
+            key={operator.id}
+            className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow"
+          >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center">
                   <UserPlus className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{operator.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {operator.name}
+                  </h3>
                   <div className="flex items-center space-x-2">
                     <Shield className="h-3 w-3 text-gray-400" />
-                    <span className="text-sm text-gray-500 capitalize">{operator.role}</span>
+                    <span className="text-sm text-gray-500 capitalize">
+                      {operator.role}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -130,7 +169,7 @@ export function OperatorsTab() {
 
             <div className="flex justify-between items-center">
               <button
-                // onClick={() => deleteOperator(operator.id)}
+                onClick={() => operator._id && deleteOperator(operator._id)}
                 className="text-red-600 hover:text-red-800 text-sm font-medium transition-colors"
               >
                 Delete
@@ -141,10 +180,12 @@ export function OperatorsTab() {
       </div>
 
       {/* Add Operator Modal */}
-       {showAddForm && (
+      {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Add New Operator</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              Add New Operator
+            </h2>
 
             <form onSubmit={handleAddOperator}>
               <div className="space-y-4">
@@ -206,7 +247,9 @@ export function OperatorsTab() {
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <p className="text-sm text-blue-800">
-                    <strong>Note:</strong> Default password will be "password123". The operator should change it after first login.
+                    <strong>Note:</strong> Default password will be
+                    "password123". The operator should change it after first
+                    login.
                   </p>
                 </div>
               </div>
@@ -223,18 +266,23 @@ export function OperatorsTab() {
                   type="submit"
                   className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
                 >
-                  Add Operator
+                  {loading ? <span className="spin"></span> : "Add Operator"}
                 </button>
               </div>
             </form>
           </div>
-        </div> )}
+        </div>
+      )}
 
       {filteredOperators.length === 0 && (
         <div className="bg-white rounded-lg p-12 border border-gray-200 text-center">
           <UserPlus className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No operators found</h3>
-          <p className="text-gray-500">No operators match your search criteria.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No operators found
+          </h3>
+          <p className="text-gray-500">
+            No operators match your search criteria.
+          </p>
         </div>
       )}
     </div>

@@ -1,19 +1,22 @@
 'use client';
-
 import React, { useState } from 'react';
 import { Eye, Plus, Search, Clock, IndianRupee,CheckCircle } from 'lucide-react';
-// import { useServices } from '@/src/hooks/useServices';
-import { Service } from "@/src/contexts/type"; // your Service type
+
+import { serviceWithId } from "@/src/contexts/type"; // your Service type
 import { initialService } from '@/src/contexts/type'; // initialService object
 import { useDashboardData } from '@/src/contexts/dataCollection';
+import toast from 'react-hot-toast';
 export function ServicesTab() {
   const [showServiceForm, setShowServiceFrom] = useState(false);
   const [serviceAddSuccess, setServiceAddSuccess] = useState(false);
   const {services}=useDashboardData();
-  // const { deleteService } = useDashboardData();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [serviceForm, setServiceForm] = useState<Service>(initialService);
+  const [serviceForm, setServiceForm] = useState<serviceWithId>(initialService);
+  const [loading, setLoading] = useState(false);
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // 🔹 Handle input change
   const handleChange = (
@@ -36,6 +39,7 @@ export function ServicesTab() {
   const handleAddNewService = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
     
+      setLoading(true);
       try {
         const res = await fetch("/api/service", {
           method: "POST",
@@ -50,16 +54,58 @@ export function ServicesTab() {
         }
     
         const result = await res.json();
-        console.log("Appointment booked:", result);
     
         setServiceAddSuccess(true);
         setShowServiceFrom(false);
-    
+        toast.success("Saved successfully!");
         setTimeout(() => setServiceAddSuccess(false), 5000);
       } catch (error) {
         console.error("Error booking appointment:", error);
+        toast.error("Failed to add service.");
+      } finally {
+        setLoading(false);
       }
     };
+
+  const toggleServiceStatus = async (id: string, currentStatus: boolean) => {
+    setSavingId(id);
+    try {
+      const res = await fetch("/api/service", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, isActive: !currentStatus }),
+      });
+
+      if (!res.ok) throw new Error("Failed to toggle status");
+
+      toast.success("Status updated successfully!");
+    } catch (error) {
+      console.error("Error toggling service status:", error);
+      toast.error("Failed to update status.");
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const deleteService = async (id: string) => {
+    setDeletingId(id);
+    try {
+      const res = await fetch("/api/service", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!res.ok) throw new Error("Failed to delete service");
+
+      toast.success("Service deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting service:", error);
+      toast.error("Failed to delete service.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -145,20 +191,30 @@ export function ServicesTab() {
 
             <div className="flex justify-between items-center">
               <button
-                // onClick={() => toggleServiceStatus(service.id, service.isActive)}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                onClick={() => service._id && toggleServiceStatus(service._id, service.isActive)}
+                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center justify-center ${
                   service.isActive 
                     ? 'bg-red-100 text-red-700 hover:bg-red-200' 
                     : 'bg-green-100 text-green-700 hover:bg-green-200'
                 }`}
+                disabled={savingId === service._id}
               >
-                {service.isActive ? 'Deactivate' : 'Activate'}
+                {savingId === service._id ? (
+                 <span className='spin'></span>
+                ) : (
+                  service.isActive ? 'Deactivate' : 'Activate'
+                )}
               </button>
               <button
-                // onClick={() => deleteService(index)}
-                className="text-red-600 hover:text-red-800 text-sm font-medium transition-colors"
+                onClick={() => service._id && deleteService(service._id)}
+                className="text-red-600 hover:text-red-800 text-sm font-medium transition-colors flex items-center justify-center"
+                disabled={deletingId === service._id}
               >
-                Delete
+                {deletingId === service._id ? (
+                 <span className='spin'></span>
+                ) : (
+                  "Delete"
+                )}
               </button>
             </div>
           </div>
@@ -244,8 +300,13 @@ export function ServicesTab() {
                 <button
                   type="submit"
                   className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
+                  disabled={loading}
                 >
-                  Add Service
+                  {loading ? (
+                    <span className='spin'></span>
+                  ) : (
+                    "Add Service"
+                  )}
                 </button>
               </div>
             </form>

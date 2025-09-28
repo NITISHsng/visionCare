@@ -14,19 +14,22 @@ import {
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import AppointmentForm from "@/src/components/AppointmentForm";
 import { Appointment } from "@/src/contexts/type";
+import toast from "react-hot-toast";
 
 export function AppointmentsTab() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const { appointments } = useDashboardData();
-  // const { deleteAppointment } = useAppointments();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
-const [dateFilter, setDateFilter] = useState(today);
+  const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+  const [dateFilter, setDateFilter] = useState(today);
+  const [savingId, setSavingId] = useState<string | null>(null);
 
   // Track local edits for status as an array
-  const [editedAppointments, setEditedAppointments] = useState<Appointment[]>([]);
+  const [editedAppointments, setEditedAppointments] = useState<Appointment[]>(
+    []
+  );
 
   const filteredAppointments = appointments.filter((appointment) => {
     const matchesStatus =
@@ -34,53 +37,49 @@ const [dateFilter, setDateFilter] = useState(today);
     const matchesSearch =
       appointment.ptName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.phoneNo.includes(searchTerm);
-    const matchesDate =
-      !dateFilter || appointment.preferredDate === dateFilter;
+    const matchesDate = !dateFilter || appointment.preferredDate === dateFilter;
     return matchesStatus && matchesSearch && matchesDate;
   });
 
   // Track status changes locally
-const handleStatusChange = (appointment: Appointment, newStatus: string) => {
-  const updated: Appointment = { 
-    ...appointment, 
-    status: newStatus as Appointment["status"] // ✅ cast here
+  const handleStatusChange = (appointment: Appointment, newStatus: string) => {
+    const updated: Appointment = {
+      ...appointment,
+      status: newStatus as Appointment["status"], // ✅ cast here
+    };
+
+    setEditedAppointments((prev) => {
+      const exists = prev.find((a) => a.id === appointment.id);
+      if (exists) {
+        return prev.map((a) => (a.id === appointment.id ? updated : a));
+      } else {
+        return [...prev, updated];
+      }
+    });
   };
-
-  setEditedAppointments((prev) => {
-    const exists = prev.find((a) => a.id === appointment.id);
-    if (exists) {
-      return prev.map((a) => (a.id === appointment.id ? updated : a));
-    } else {
-      return [...prev, updated];
-    }
-  });
-};
-
 
   // Save entire appointment document
   const saveAppointment = async (id: string) => {
     const updatedAppointment = editedAppointments.find((a) => a.id === id);
     if (!updatedAppointment) return;
-
+    setSavingId(id);
     try {
       const res = await fetch("/api/appointment", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedAppointment), // send full document
+        body: JSON.stringify(updatedAppointment), 
       });
 
       if (!res.ok) throw new Error("Failed to save");
 
       const data = await res.json();
       console.log("Appointment updated:", data);
-      alert("Saved successfully!");
-
-      // Remove from local edits after save
-      // setEditedAppointments((prev) => prev.filter((a) => a.id !== id));
-
+      toast.success("Saved successfully!");
+      setSavingId(null);
     } catch (err) {
       console.error("Error updating appointment:", err);
-      alert("Failed to save appointment.");
+      toast.error("Failed to save appointment.");
+      setSavingId(null);
     }
   };
 
@@ -193,59 +192,68 @@ const handleStatusChange = (appointment: Appointment, newStatus: string) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredAppointments.map((appointment) => {
           const editedAppointment =
-            editedAppointments.find((a) => a.id === appointment.id) ?? appointment;
+            editedAppointments.find((a) => a.id === appointment.id) ??
+            appointment;
 
           return (
             <div
               key={appointment.id}
               className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow"
             >
-<div className="flex items-start justify-between mb-4">
-  <div>
-    <div className="text-lg font-semibold text-gray-900">
-      {appointment.ptName} <span className="text-[10px] text-green-600">{appointment.repeated ?"Repeated":"" }</span>
-    </div>
-    <p className="text-sm text-gray-500">Age: {appointment.age}</p>
-  </div>
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <div className="text-lg font-semibold text-gray-900">
+                    {appointment.ptName}{" "}
+                    <span className="text-[10px] text-green-600">
+                      {appointment.repeated ? "Repeated" : ""}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    Age: {appointment.age}
+                  </p>
+                </div>
 
-  <select
-    value={editedAppointment.status}
-    onChange={(e) => handleStatusChange(appointment, e.target.value)}
-    className={`text-xs rounded-full px-3 py-1 font-medium border-0 focus:ring-2 focus:ring-teal-500 ${
-      editedAppointment.status === "pending"
-        ? "bg-orange-100 text-orange-700"
-        : editedAppointment.status === "confirmed"
-        ? "bg-green-100 text-green-700"
-        : editedAppointment.status === "completed"
-        ? "bg-blue-100 text-blue-700"
-        : "bg-red-100 text-red-700"
-    }`}
-  >
-    {/* Show options based on status */}
-    {["pending", "cancelled"].includes(editedAppointment.status) && (
-      <>
-        <option value="pending">Pending</option>
-        <option value="confirmed">Confirmed</option>
-        <option value="completed">Completed</option>
-        <option value="cancelled">Cancelled</option>
-      </>
-    )}
+                <select
+                  value={editedAppointment.status}
+                  onChange={(e) =>
+                    handleStatusChange(appointment, e.target.value)
+                  }
+                  className={`text-xs rounded-full px-3 py-1 font-medium border-0 focus:ring-2 focus:ring-teal-500 ${
+                    editedAppointment.status === "pending"
+                      ? "bg-orange-100 text-orange-700"
+                      : editedAppointment.status === "confirmed"
+                      ? "bg-green-100 text-green-700"
+                      : editedAppointment.status === "completed"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {/* Show options based on status */}
+                  {["pending", "cancelled"].includes(
+                    editedAppointment.status
+                  ) && (
+                    <>
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                    </>
+                  )}
 
-    {editedAppointment.status === "confirmed" && (
-      <>
-        <option value="confirmed">Confirmed</option>
-        <option value="completed">Completed</option>
-      </>
-    )}
+                  {editedAppointment.status === "confirmed" && (
+                    <>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="completed">Completed</option>
+                    </>
+                  )}
 
-    {editedAppointment.status === "completed" && (
-      <>
-         <option value="completed">Completed</option>
-      </>
-    )}
-  </select>
-</div>
-
+                  {editedAppointment.status === "completed" && (
+                    <>
+                      <option value="completed">Completed</option>
+                    </>
+                  )}
+                </select>
+              </div>
 
               <div className="space-y-2 mb-4">
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -276,24 +284,21 @@ const handleStatusChange = (appointment: Appointment, newStatus: string) => {
                 </div>
               )}
 
-              <div className="flex justify-between space-x-2">
-                <button
-                  // onClick={() => deleteAppointment(appointment.id)}
-                  className="px-3 py-1 text-red-600 hover:text-red-800 text-sm font-medium transition-colors"
-                >
-                  Delete
-                </button>
-                {
-                  appointment.status !== "completed" && (
+              <div className="flex justify-end space-x-2">
+                {appointment.status !== "completed" && (
 
-                <button
-                  onClick={() => saveAppointment(appointment.id)}
-                  className="px-3 py-1 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors"
-                >
-                  Save
-                </button>
-                  )
-                }
+                  <button
+                    onClick={() => saveAppointment(appointment.id)}
+                    className="flex items-center justify-center px-3 py-1 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors disabled:opacity-70"
+                    disabled={savingId === appointment.id}
+                  >
+                    {savingId === appointment.id ? (
+                      <span className="spin"></span>
+                    ) : (
+                      "Save"
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           );

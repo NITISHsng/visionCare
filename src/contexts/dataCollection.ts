@@ -1,11 +1,11 @@
 "use client"
 import {useState,useEffect} from "react";
-import { Staff,Service,Appointment,PatientFullTypeWithObjectId } from "./type";
+import { staffWithId,serviceWithId,Appointment,PatientFullTypeWithObjectId } from "./type";
 
 export function useDashboardData() {
-  const [staffs, setStaffs] = useState<Staff[] >([]);
+  const [staffs, setStaffs] = useState<staffWithId[] >([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<serviceWithId[]>([]);
   const [patients, setPatients] = useState<PatientFullTypeWithObjectId[]>([]);
 
   useEffect(() => {

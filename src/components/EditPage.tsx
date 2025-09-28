@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import { PatientFullTypeWithObjectId } from "@/src/contexts/type";
-
+import toast from "react-hot-toast";
 const EditPage = () => {
   const { patients } = useDashboardData();
   const params = useParams();
@@ -113,17 +113,13 @@ const EditPage = () => {
       });
 
       if (!res.ok) throw new Error("Failed to save");
-
       const data = await res.json();
-      console.log("Updated successfully:", data);
       localStorage.setItem('activeTab', "patients");
-
-      alert("Saved successfully!");
-
+      toast.success("Saved successfully!");
       setFormData(updatedFormData);
     } catch (err) {
       console.error("Save failed:", err);
-      alert("Failed to save");
+      toast.error("Failed to save");
     } finally {
       setSaving(false);
     }
