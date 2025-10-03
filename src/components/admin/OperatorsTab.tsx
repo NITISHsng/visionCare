@@ -83,6 +83,7 @@ export function OperatorsTab() {
       toast.error("Failed to delete service.");
     } 
   };
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">

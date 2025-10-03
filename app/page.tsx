@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/src/contexts/AuthContext';
-import { PatientPortal } from '@/src/components/PatientPortal';
+import { FPatientPortal as PatientPortal } from '@/src/components/PatientPortal';
 // import { LoginForm } from '@/src/components/LoginForm'; // Remove LoginForm import
 import { AdminDashboard } from '@/src/components/admin/AdminDashboard';
 import { OperatorDashboard } from '@/src/components/operator/OperatorDashboard';

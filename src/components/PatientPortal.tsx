@@ -7,12 +7,13 @@ import {
 } from 'lucide-react';
 import PatientForms from './AppointmentForm';
 import { useDashboardData } from '../contexts/dataCollection';
+import Link from 'next/link';
 
 interface PatientPortalProps {
   onGoToAdmin: () => void;
 }
 
-export function PatientPortal({ onGoToAdmin }: PatientPortalProps) {
+export function FPatientPortal({ onGoToAdmin }: PatientPortalProps) {
   const { services} = useDashboardData();
 let servicesLoading=false;
 if(services.length){
@@ -143,24 +144,24 @@ if(services.length){
                 <Phone className="h-6 w-6 text-teal-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Phone</h3>
-              <p className="text-gray-600">+91 9876543210</p>
-              <p className="text-gray-600">+91 9876543211</p>
+              <p className="text-gray-600">+91 9635868211</p>
+              <p className="text-gray-600">+91 8250611063</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Mail className="h-6 w-6 text-blue-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Email</h3>
-              <p className="text-gray-600">info@kachakali.com</p>
-              <p className="text-gray-600">appointments@kachakali.com</p>
+              {/* <p className="text-gray-600">info@kachakali.com</p> */}
+              <p className="text-gray-600">singhasatish9@gmail.com</p>
+              <p className="text-gray-600">singhasatish9@gmail.com</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <MapPin className="h-6 w-6 text-purple-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Address</h3>
-              <p className="text-gray-600">123 Vision Street</p>
-              <p className="text-gray-600">Kachakali, Kerala 680001</p>
+              <p className="text-gray-600">VisionCare Durga Puja ground, Bhaispita - Kachakali Rd, West Bengal 733207</p>
             </div>
           </div>
 
@@ -175,6 +176,27 @@ if(services.length){
         </div>
       </div>
 
+      {/* Google Maps */}
+      <div className="w-full mb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Find Us</h2>
+            <p className="text-gray-600">Visit our clinic at the location below</p>
+          </div>
+          <div className="w-full">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d281.7104539441418!2d88.37211285332732!3d26.44275057239368!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e459a06c9fd3ab%3A0xafa2f07ff5723b26!2sKachakali%20vision%20care!5e1!3m2!1sen!2sin!4v1759463652726!5m2!1sen!2sin" 
+              width="100%" 
+              height="450" 
+              style={{border: 0}} 
+              allowFullScreen={true} 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+
       {/* Booking Modal */}
 {showBookingForm && (
   <div>
@@ -182,6 +204,56 @@ if(services.length){
   </div>
 )}
 
+      {/* Footer Section */}
+      <footer className="bg-gray-900 text-white py-8 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {/* About Section */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">About Kachakali Vision Care</h3>
+              <p className="text-gray-400 text-sm">
+                Providing quality eye care services with state-of-the-art technology and experienced professionals.
+              </p>
+            </div>
+            
+            {/* Quick Links */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <ul className="space-y-2 text-sm">
+                <li><a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">Home</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">Services</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">Book Appointment</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">Contact Us</a></li>
+              </ul>
+            </div>
+            
+            {/* Contact Info */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center text-gray-400">
+                  <Phone className="h-4 w-4 mr-2" />
+                  +91 8250611063
+                </li>
+                <li className="flex items-center text-gray-400">
+                  <Mail className="h-4 w-4 mr-2" />
+                  singhasatish9@gmail.com
+                </li>
+                <li className="flex items-center text-gray-400">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  VisionCare Durga Puja ground, Bhaispita - Kachakali Rd
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          Copyright
+          <div className="pt-8 flex justify-between border-t border-gray-800 text-center text-sm text-gray-400">
+            <p>&copy; {new Date().getFullYear()} Kachakali Vision Care.</p>
+            <p>Developed by <Link href="https://devnitishx.vercel.app/">Nitish Chandra Singha</Link></p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

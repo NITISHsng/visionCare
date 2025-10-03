@@ -108,7 +108,7 @@ export function ReportsTab() {
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">Completed</span>
+              <span className="text-gray-700">Confirm</span>
               <div className="flex items-center space-x-2">
                 <div className="w-24 bg-gray-200 rounded-full h-2">
                   <div 
