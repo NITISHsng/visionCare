@@ -245,14 +245,6 @@ export function OperatorsTab() {
                     <option value="operator">Operator</option>
                   </select>
                 </div>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-sm text-blue-800">
-                    <strong>Note:</strong> Default password will be
-                    "password123". The operator should change it after first
-                    login.
-                  </p>
-                </div>
               </div>
 
               <div className="flex justify-end space-x-4 mt-6">

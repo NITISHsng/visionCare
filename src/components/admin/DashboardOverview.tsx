@@ -135,7 +135,7 @@ export function DashboardOverview() {
         </div>
 
         <div className="bg-white rounded-lg p-2 md:p-5 border border-gray-200">
-          <div className="flex items-center md:justify-between justify-center">
+          <div className="flex justify-between ">
             <div>
               <p className="text-sm font-medium text-gray-600">
                 Total Appointments
@@ -152,7 +152,7 @@ export function DashboardOverview() {
         </div>
 
         <div className="bg-white rounded-lg p-2 md:p-5 border border-gray-200">
-          <div className="flex items-center md:justify-between justify-center">
+          <div className="flex items-center justify-between ">
             <div>
               <p className="text-sm font-medium text-gray-600">
                 Pending Requests

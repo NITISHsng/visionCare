@@ -5,7 +5,10 @@ import { useParams } from "next/navigation";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import { PatientFullTypeWithObjectId } from "@/src/contexts/type";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 const EditPage = () => {
+
+  const navigate=useRouter();
   const { patients } = useDashboardData();
   const params = useParams();
   const id = params?.id as string;
@@ -117,6 +120,7 @@ const EditPage = () => {
       localStorage.setItem("activeTab", "patients");
       toast.success("Saved successfully!");
       setFormData(updatedFormData);
+      navigate.back();
     } catch (err) {
       console.error("Save failed:", err);
       toast.error("Failed to save");

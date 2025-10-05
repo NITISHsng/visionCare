@@ -262,7 +262,7 @@ export function ServicesTab() {
               Add New Service
             </h2>
             <form onSubmit={handleAddNewService}>
-              <div className="space-y-4">
+              <div className="space-y-2 md:space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Service Name*

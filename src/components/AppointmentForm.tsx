@@ -70,12 +70,12 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
   };
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+      <div className="bg-white rounded-lg p-3 md:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <h2 className="text-xl font-bold text-gray-900 mb-2 md:mb-4">
           Book Appointment
         </h2>
         <form onSubmit={handleBookAppointment}>
-          <div className="space-y-4">
+          <div className="space-y-2 md:space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name
@@ -85,7 +85,7 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
                 name="ptName"
                 required
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-1 md:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
             <div>
@@ -97,7 +97,7 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
                 name="age"
                 required
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-1 md:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
             <div>
@@ -109,7 +109,7 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
                 name="phoneNo"
                 required
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-1 md:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
             <div>
@@ -122,7 +122,7 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
                 required
                 min={new Date().toISOString().split("T")[0]}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-1 md:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
             <div>
@@ -181,7 +181,7 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
                 name="notes"
                 rows={3}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-1 md:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                 placeholder="Any specific concerns or requirements..."
               />
             </div>
