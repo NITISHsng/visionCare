@@ -27,7 +27,7 @@ export async function getCollection<T extends Document = Document>(
   name: string
 ): Promise<Collection<T>> {
   const client = await clientPromise;
-  const db: Db = client.db();
+  const db: Db = client.db(process.env.MONGODB_DB);
   return db.collection<T>(name);
 }
 
