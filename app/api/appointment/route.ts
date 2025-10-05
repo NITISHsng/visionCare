@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
+import { getCollection } from "@/lib/mongodb";
 import { Appointment, PatientFullType, initialPatient } from "@/src/contexts/type";
 
 export async function PUT(req: Request) {
@@ -21,14 +21,9 @@ export async function PUT(req: Request) {
       );
     }
 
-    // ✅ Connect to MongoDB
-    const client = await clientPromise;
-    const db = client.db("visionCare");
+    const appointmentsColl = await getCollection<Appointment>("appointments");
 
-    const appointmentsColl = db.collection<Appointment>("appointments");
-    const patientsColl = db.collection<PatientFullType>("patients");
-
-    // ✅ Update appointment status
+    // Update the appointment status
     const result = await appointmentsColl.updateOne(
       { id },
       { $set: { status, updatedAt: new Date().toISOString() } }
@@ -41,7 +36,7 @@ export async function PUT(req: Request) {
       );
     }
 
-    // ✅ Fetch updated appointment
+    // Fetch the updated appointment
     const updatedAppointment = await appointmentsColl.findOne({ id });
     if (!updatedAppointment) {
       return NextResponse.json(
@@ -50,38 +45,40 @@ export async function PUT(req: Request) {
       );
     }
 
-    // ✅ Insert into "patients" if confirmed or completed
-    if (status === "confirmed" || status === "completed") {
-      const existingPatient = await patientsColl.findOne({ id });
+    // Only insert into patients if status is confirmed or completed
+if (status === "confirmed" || status === "completed") {
+  const patientsColl = await getCollection<PatientFullType>("patients");
 
-      if (!existingPatient) {
-        const today = new Date();
-        const formattedDate = `${today.getFullYear()}-${String(
-          today.getMonth() + 1
-        ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  // Check if patient already exists
+  const existingPatient = await patientsColl.findOne({ id });
+  if (!existingPatient) {
+const today = new Date();
+const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-        const patientToInsert: PatientFullType = {
-          ...initialPatient,
-          ...updatedAppointment,
-          orderDate: formattedDate,
-        };
+    const patientToInsert: PatientFullType = {
+      ...initialPatient,
+      ...updatedAppointment,
+      orderDate: formattedDate,
+    };
 
-        await patientsColl.insertOne(patientToInsert);
-      }
-    }
+    await patientsColl.insertOne(patientToInsert);
+  }
+}
+
 
     return NextResponse.json({ success: true, data: updatedAppointment });
   } catch (error: unknown) {
     console.error("Error in PUT:", error);
+
     const message =
       error instanceof Error ? error.message : "Internal server error";
+
     return NextResponse.json(
       { success: false, error: message },
       { status: 500 }
     );
   }
 }
-
 export async function POST(req: Request) {
   try {
     const body: Appointment = await req.json();
@@ -94,11 +91,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Connect to MongoDB
-    const client = await clientPromise;
-    const db = client.db("visionCare");
-    const appointmentsColl = db.collection<Appointment>("appointments");
-    const patientsColl = db.collection<PatientFullType>("patients");
+    // ✅ Get collections
+    const appointmentsColl = await getCollection<Appointment>("appointments");
+    const patientsColl = await getCollection<PatientFullType>("patients");
 
     // ✅ Check if patient already exists
     const existingPatient = await patientsColl.findOne({
@@ -120,6 +115,7 @@ export async function POST(req: Request) {
     // ✅ Insert appointment
     const result = await appointmentsColl.insertOne(appointmentData);
 
+
     return NextResponse.json({
       success: true,
       id: result.insertedId,
@@ -127,8 +123,10 @@ export async function POST(req: Request) {
     });
   } catch (error: unknown) {
     console.error("Error in api:", error);
+
     const message =
       error instanceof Error ? error.message : "Internal server error";
+
     return NextResponse.json(
       { success: false, error: message },
       { status: 500 }

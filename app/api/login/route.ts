@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
-import { Staff } from "@/src/contexts/type"; // your type definition
+import { getCollection } from "@/lib/mongodb";
+import { Staff } from "@/src/contexts/type"; // Corrected import path
 
 export async function POST(req: Request) {
   try {
@@ -15,16 +15,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Connect to MongoDB directly
-    const client = await clientPromise;
-    const db = client.db("visionCare");
-    const collection = db.collection<Staff>("staff");
+    // ✅ Get collection
+    const collection = await getCollection<Staff>("staff");
 
     // ✅ Find staff by email and password
     const staffMember = await collection.findOne({ email, password });
 
     if (staffMember) {
-      // Exclude sensitive data before returning
+      // Exclude sensitive information like password before sending to client
       const { password, ...userWithoutPassword } = staffMember;
       return NextResponse.json({ success: true, user: userWithoutPassword });
     } else {
@@ -35,7 +33,12 @@ export async function POST(req: Request) {
     }
   } catch (error: unknown) {
     console.error("Error in api/staff:", error);
+
     const message = error instanceof Error ? error.message : "Internal server error";
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+
+    return NextResponse.json(
+      { success: false, error: message },
+      { status: 500 }
+    );
   }
 }

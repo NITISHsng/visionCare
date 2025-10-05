@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
-// import { getCollection } from "@/lib/mongodb";
+import { getCollection } from "@/lib/mongodb";
 import { PatientFullType } from "../../../src/contexts/type";
 import { ObjectId } from "mongodb";
 
@@ -16,10 +15,7 @@ export async function POST(req: Request) {
     }
 
     // ✅ Get collection
-    // const collection = await getCollection<PatientFullType>("patients");
-const client = await clientPromise;
-const db = client.db("visionCare");
-const collection = db.collection("staff");
+    const collection = await getCollection<PatientFullType>("patients");
 
     const result = await collection.insertOne({
       ...body,
@@ -52,10 +48,8 @@ export async function PUT(req: Request) {
       );
     }
 
-    // const collection = await getCollection<PatientFullType>("patients");
-    const client = await clientPromise;
-const db = client.db("visionCare");
-const collection =db.collection("patients")
+    const collection = await getCollection<PatientFullType>("patients");
+
     // Ensure valid MongoDB ObjectId
     const objectId = new ObjectId(_id);
 

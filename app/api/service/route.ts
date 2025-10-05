@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/mongodb";
+import { getCollection } from "@/lib/mongodb";
 import { Service } from "../../../src/contexts/type";
 import { ObjectId } from "mongodb";
 
@@ -10,22 +10,23 @@ export async function POST(req: Request) {
     // ✅ Validate user input
     if (!body.name || !body.price || !body.description) {
       return NextResponse.json(
-        { success: false, error: "Missing required fields: name, price, or description" },
+        { success: false, error: "Missing required fields: patient name or phone number" },
         { status: 400 }
       );
     }
 
-    // ✅ Connect directly to MongoDB
-    const client = await clientPromise;
-    const db = client.db("visionCare");
-    const collection = db.collection<Service>("services");
+    // ✅ Get collection
+    const collection = await getCollection<Service>("services");
 
-    // ✅ Insert new service
-    const result = await collection.insertOne({ ...body });
+
+    const result = await collection.insertOne({
+      ...body,
+    });
 
     return NextResponse.json({ success: true, id: result.insertedId });
   } catch (error: unknown) {
-    console.error("Error in POST /api/service:", error);
+    console.error("Error in api:", error);
+
     const message = error instanceof Error ? error.message : "Internal server error";
 
     return NextResponse.json(
@@ -47,12 +48,8 @@ export async function PUT(req: Request) {
       );
     }
 
-    // ✅ Connect directly to MongoDB
-    const client = await clientPromise;
-    const db = client.db("visionCare");
-    const collection = db.collection<Service>("services");
+    const collection = await getCollection<Service>("services");
 
-    // ✅ Update service details
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
       { $set: updateFields }
@@ -87,15 +84,9 @@ export async function DELETE(req: Request) {
         { status: 400 }
       );
     }
-
-    // ✅ Connect directly to MongoDB
-    const client = await clientPromise;
-    const db = client.db("visionCare");
-    const collection = db.collection<Service>("services");
-
-    // ✅ Delete service
+    
+    const collection = await getCollection<Service>("services");
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
-
     if (result.deletedCount === 0) {
       return NextResponse.json(
         { success: false, error: "Service not found" },
