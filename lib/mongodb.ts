@@ -1,5 +1,4 @@
 import { MongoClient, Db, Collection, Document } from "mongodb";
-
 const uri = process.env.MONGODB_URI!;
 if (!uri) throw new Error("Please define MONGODB_URI in .env.local");
 
@@ -27,7 +26,7 @@ export async function getCollection<T extends Document = Document>(
   name: string
 ): Promise<Collection<T>> {
   const client = await clientPromise;
-  const db: Db = client.db(process.env.MONGODB_DB);
+  const db: Db = client.db("visionCare");
   return db.collection<T>(name);
 }
 
