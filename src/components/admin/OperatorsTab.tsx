@@ -58,7 +58,7 @@ export function OperatorsTab() {
       setLoading(false);
       const result = await res.json();
       setSaveSuccessfully(true);
-      toast.success("Operator Create Successfully!")
+      toast.success("Operator Create Successfully!");
       setTimeout(() => setSaveSuccessfully(false), 5000);
       setShowAddForm(false);
       setStaffForm(initialStaff);
@@ -81,26 +81,26 @@ export function OperatorsTab() {
     } catch (error) {
       console.error("Error deleting service:", error);
       toast.error("Failed to delete service.");
-    } 
+    }
   };
-  
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-[20px] md:text-2xl font-bold text-gray-900">
             Operator Management
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 hidden lg:flex ">
             Manage system operators and their access
           </p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
-          className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors"
+          className="bg-teal-500 hover:bg-teal-600 text-white px-2 py-1 md:px-4 d:py-4 rounded-lg font-medium flex items-center space-x-2 transition-colors"
         >
           <Plus className="h-4 w-4" />
-          <span>Add Operator</span>
+          <span>Operator</span>
         </button>
       </div>
       {/* Success Message */}

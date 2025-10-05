@@ -42,15 +42,15 @@ export function ScheduleTab() {
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Schedule Management</h1>
-        <p className="text-gray-600">View and manage daily appointment schedule</p>
+        <p className="text-gray-600 hidden lg:flex">View and manage daily appointment schedule</p>
       </div>
 
       {/* Date Navigator */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-lg p-3 md:p-6 border border-gray-200">
+        <div className="flex items-center justify-between mb-2  md:mb-4">
           <button
             onClick={previousDay}
             className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
@@ -58,14 +58,14 @@ export function ScheduleTab() {
             <ChevronLeft className="h-5 w-5" />
           </button>
           <div className="text-center">
-            <h2 className="text-xl font-bold text-gray-900">
+            <h1 className="text-[16px] md:text-xl font-bold text-gray-900">
               {selectedDate.toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric' 
               })}
-            </h2>
+            </h1>
             <p className="text-sm text-gray-500">{dayAppointments.length} appointments scheduled</p>
           </div>
           <button
@@ -88,23 +88,23 @@ export function ScheduleTab() {
 
       {/* Schedule Grid */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 bg-gray-50">
+        <div className="p-3 md:p-4 border-b border-gray-200 bg-gray-50">
           <h3 className="text-lg font-semibold text-gray-900">Daily Schedule</h3>
         </div>
         
-        <div className="p-4">
+        <div className="p-2 md:p-4">
           <div className="space-y-2">
             {timeSlots.map((time) => {
               const appointment = dayAppointments.find(apt => apt.preferredTime === time);
               
               return (
-                <div key={time} className="flex items-center border-b border-gray-100 py-3 last:border-b-0">
+                <div key={time} className="flex items-center border-b border-gray-100 py-1 last:border-b-0">
                   <div className="w-10 text-sm font-medium text-gray-600">
                     {time}
                   </div>
-                  <div className="flex-1 ml-4">
+                  <div className="flex-1 ml-2 md:ml-4">
                     {appointment ? (
-                      <div className={`p-3 rounded-lg border-l-4 ${
+                      <div className={`p-1 md:p-3 rounded-lg border-l-4 ${
                         appointment.status === 'confirmed' ? 'bg-green-50 border-green-400' :
                         appointment.status === 'pending' ? 'bg-orange-50 border-orange-400' :
                         appointment.status === 'completed' ? 'bg-blue-50 border-blue-400' :
@@ -113,7 +113,9 @@ export function ScheduleTab() {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-gray-900">{appointment.ptName}</p>
-                            <p className="text-sm text-gray-600">Age: {appointment.age} • {appointment.phoneNo}</p>
+                            <p className="text-sm text-gray-600">
+                              Age: {appointment.age} •
+                               {appointment.phoneNo}</p>
                             <p className="text-sm text-gray-600 capitalize">{appointment.purpose.replace('-', ' ')}</p>
                           </div>
                           {/* <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -130,7 +132,7 @@ export function ScheduleTab() {
                         )} */}
                       </div>
                     ) : (
-                      <div className="p-3 border-2 border-dashed border-gray-200 rounded-lg text-center">
+                      <div className="p-2 md:p3 border-2 border-dashed border-gray-200 rounded-lg text-center">
                         <p className="text-sm text-gray-400">No appointment scheduled</p>
                       </div>
                     )}
@@ -143,7 +145,7 @@ export function ScheduleTab() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-6">
         <div className="bg-white rounded-lg p-6 border border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -151,33 +153,33 @@ export function ScheduleTab() {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
-              <p className="text-xl font-bold text-gray-900">{dayAppointments.length}</p>
+              <p className="text-xl font-bold flex justify-center text-gray-900">{dayAppointments.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white rounded-lg p-3 md:p-5 border border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
               <Clock className="h-5 w-5 text-orange-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">Pending Today</p>
-              <p className="text-xl font-bold text-gray-900">
+              <p className="text-xl font-bold flex justify-center text-gray-900">
                 {dayAppointments.filter(apt => apt.status === 'pending').length}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="bg-white rounded-lg p-3 md:p-5 border border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
               <Users className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-600">Confirmed Today</p>
-              <p className="text-xl font-bold text-gray-900">
+              <p className="text-xl font-bold flex justify-center text-gray-900">
                 {dayAppointments.filter(apt => apt.status === 'confirmed').length}
               </p>
             </div>

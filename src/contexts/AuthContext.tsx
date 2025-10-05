@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else if (data.user.role === 'operator') {
           router.push('/operator');
         } else {
-          router.push('/'); // Default redirect for other roles or if role is not defined
+          router.push('/');
         }
         return true;
       } else {

@@ -67,7 +67,7 @@ export function AppointmentsTab() {
       const res = await fetch("/api/appointment", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedAppointment), 
+        body: JSON.stringify(updatedAppointment),
       });
 
       if (!res.ok) throw new Error("Failed to save");
@@ -84,23 +84,23 @@ export function AppointmentsTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 md:space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Appointment Management
+          <h1 className="text-[20px] md:text-2xl font-bold text-gray-900">
+            Appointments
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 hidden lg:flex ">
             View and manage all patient appointments
           </p>
         </div>
         <button
           onClick={() => setShowBookingForm(true)}
-          className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-colors"
+          className="bg-teal-500 hover:bg-teal-600 text-white px-2 py-1 md:px-4 d:py-4 rounded-lg font-medium flex items-center space-x-2 transition-colors"
         >
           <Plus className="h-4 w-4" />
-          <span>Add Appointment</span>
+          <span>Appointment</span>
         </button>
       </div>
 
@@ -126,10 +126,10 @@ export function AppointmentsTab() {
       )}
 
       {/* Filters */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white rounded-lg p-2 md:p-5 border border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="hidden md:block text-sm font-medium text-gray-700 mb-1">
               Search
             </label>
             <div className="relative">
@@ -144,52 +144,53 @@ export function AppointmentsTab() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-            >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
+            <div>
+              <label className="hidden md:block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              >
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date
-            </label>
-            <input
-              type="date"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-
-          <div className="flex items-end">
-            <button
-              onClick={() => {
-                setSearchTerm("");
-                setStatusFilter("all");
-                setDateFilter("");
-              }}
-              className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              Clear Filters
-            </button>
+            <div>
+              <label className="hidden md:block text-sm font-medium text-gray-700 mb-1">
+                Date
+              </label>
+              <input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+            <div className="hidden md:flex items-end ">
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setStatusFilter("all");
+                  setDateFilter("");
+                }}
+                className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Clear Filters
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Appointments Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 md:gap-4 gap-2">
         {filteredAppointments.map((appointment) => {
           const editedAppointment =
             editedAppointments.find((a) => a.id === appointment.id) ??
@@ -198,9 +199,9 @@ export function AppointmentsTab() {
           return (
             <div
               key={appointment.id}
-              className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow"
+              className="bg-white rounded-lg p-3 md:p-5 border border-gray-200 hover:shadow-md transition-shadow"
             >
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between ">
                 <div>
                   <div className="text-lg font-semibold text-gray-900">
                     {appointment.ptName}{" "}
@@ -212,72 +213,76 @@ export function AppointmentsTab() {
                     Age: {appointment.age}
                   </p>
                 </div>
+                <div>
+                  <select
+                    value={editedAppointment.status}
+                    onChange={(e) =>
+                      handleStatusChange(appointment, e.target.value)
+                    }
+                    className={`text-xs rounded-full px-3 py-1 font-medium border-0 focus:ring-2 focus:ring-teal-500 ${
+                      editedAppointment.status === "pending"
+                        ? "bg-orange-100 text-orange-700"
+                        : editedAppointment.status === "confirmed"
+                        ? "bg-green-100 text-green-700"
+                        : editedAppointment.status === "completed"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {/* Show options based on status */}
+                    {["pending", "cancelled"].includes(
+                      editedAppointment.status
+                    ) && (
+                      <>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </>
+                    )}
 
-                <select
-                  value={editedAppointment.status}
-                  onChange={(e) =>
-                    handleStatusChange(appointment, e.target.value)
-                  }
-                  className={`text-xs rounded-full px-3 py-1 font-medium border-0 focus:ring-2 focus:ring-teal-500 ${
-                    editedAppointment.status === "pending"
-                      ? "bg-orange-100 text-orange-700"
-                      : editedAppointment.status === "confirmed"
-                      ? "bg-green-100 text-green-700"
-                      : editedAppointment.status === "completed"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {/* Show options based on status */}
-                  {["pending", "cancelled"].includes(
-                    editedAppointment.status
-                  ) && (
-                    <>
-                      <option value="pending">Pending</option>
-                      <option value="confirmed">Confirmed</option>
-                      <option value="completed">Completed</option>
-                      <option value="cancelled">Cancelled</option>
-                    </>
-                  )}
+                    {editedAppointment.status === "confirmed" && (
+                      <>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="completed">Completed</option>
+                      </>
+                    )}
 
-                  {editedAppointment.status === "confirmed" && (
-                    <>
-                      <option value="confirmed">Confirmed</option>
-                      <option value="completed">Completed</option>
-                    </>
-                  )}
+                    {editedAppointment.status === "completed" && (
+                      <>
+                        <option value="completed">Completed</option>
+                      </>
+                    )}
+                  </select>
 
-                  {editedAppointment.status === "completed" && (
-                    <>
-                      <option value="completed">Completed</option>
-                    </>
-                  )}
-                </select>
+                  <div className="flex mt-2 items-center space-x-2 text-sm text-gray-600">
+                    <Eye className="h-4 w-4" />
+                    <span className="capitalize">
+                      {appointment.purpose.replace("-", " ")}
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <Calendar className="h-4 w-4" />
-                  <span>{appointment.preferredDate}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <Clock className="h-4 w-4" />
-                  <span>{appointment.preferredTime}</span>
+              <div className="space-y-2">
+                <div className="flex gap-4">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <Calendar className="h-4 w-4" />
+                    <span>{appointment.preferredDate}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <Clock className="h-4 w-4" />
+                    <span>{appointment.preferredTime}</span>
+                  </div>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                   <Phone className="h-4 w-4" />
                   <span>{appointment.phoneNo}</span>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <Eye className="h-4 w-4" />
-                  <span className="capitalize">
-                    {appointment.purpose.replace("-", " ")}
-                  </span>
-                </div>
               </div>
 
               {appointment.notes && (
-                <div className="mb-4">
+                <div className="">
                   <p className="text-sm text-gray-600">
                     <strong>Notes:</strong> {appointment.notes}
                   </p>
@@ -286,7 +291,6 @@ export function AppointmentsTab() {
 
               <div className="flex justify-end space-x-2">
                 {appointment.status !== "completed" && (
-
                   <button
                     onClick={() => saveAppointment(appointment.id)}
                     className="flex items-center justify-center px-3 py-1 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors disabled:opacity-70"

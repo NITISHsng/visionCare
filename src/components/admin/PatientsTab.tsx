@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Users, Search, Edit, Trash2, User ,Eye} from "lucide-react";
+import { Users, Search, Edit, Trash2, User, Eye } from "lucide-react";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import Link from "next/link";
 
 export function PatientsTab() {
   const { patients } = useDashboardData();
   const [searchTerm, setSearchTerm] = useState("");
-const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
-const [dateFilter, setDateFilter] = useState(today);
+  const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+  const [dateFilter, setDateFilter] = useState(today);
 
   const [repeatedFilter, setRepeatedFilter] = useState(""); // ✅ new filter
 
@@ -27,68 +27,70 @@ const [dateFilter, setDateFilter] = useState(today);
         ? patient.repeated === true
         : patient.repeated === false;
 
-    const matchesDate =
-      !dateFilter || patient.preferredDate === dateFilter;
+    const matchesDate = !dateFilter || patient.preferredDate === dateFilter;
 
     return matchStatus && matchRepeated && matchesDate;
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-x-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Patient Management</h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 hidden lg:flex ">
           Manage patient records and prescription information
         </p>
       </div>
 
- {/* Search + Filters */}
-<div className="bg-white flex flex-wrap gap-4 rounded-lg p-4 border border-gray-200">
-  {/* Search input */}
-  <div className="relative flex-1 min-w-[200px] items-center">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Search
-    </label>
-    <Search className="absolute left-3 top-2/3  transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-    <input
-      type="text"
-      placeholder="Search by name, phone, bill number, or email..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-    />
-  </div>
+      {/* Filters */}
+      <div className="bg-white rounded-lg p-2 md:p-5 border border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+          <div>
+            <label className="hidden md:block text-sm font-medium text-gray-700 mb-1">
+              Search
+            </label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                placeholder="Search by name, phone, bill number, or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+          </div>
 
-  {/* Date filter */}
-  <div className="min-w-[150px] flex-1 sm:flex-none">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Date
-    </label>
-    <input
-      type="date"
-      value={dateFilter}
-      onChange={(e) => setDateFilter(e.target.value)}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-    />
-  </div>
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-1">
+            <div>
+              <label className="hidden md:block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                name="repeated"
+                value={repeatedFilter}
+                onChange={(e) => setRepeatedFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 "
+              >
+                <option value="">All</option>
+                <option value="repeated">Repeated</option>
+                <option value="new">New</option>
+              </select>
+            </div>
 
-  {/* Repeated filter */}
-  <div className="min-w-[150px] flex-1 sm:flex-none">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Status
-    </label>
-    <select
-      name="repeated"
-      value={repeatedFilter}
-      onChange={(e) => setRepeatedFilter(e.target.value)}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-    >
-      <option value="">All</option>
-      <option value="repeated">Repeated</option>
-      <option value="new">New</option>
-    </select>
-  </div>
-</div>
+            <div>
+              <label className="hidden md:block text-sm font-medium text-gray-700 mb-1">
+                Date
+              </label>
+              <input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Patients Table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
@@ -118,7 +120,10 @@ const [dateFilter, setDateFilter] = useState(today);
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredPatients.map((patient) => (
-                <tr key={patient._id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={patient._id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
                     <span className="flex items-center gap-2">
                       {patient.repeated ? (
@@ -137,9 +142,13 @@ const [dateFilter, setDateFilter] = useState(today);
                         <User className="h-4 w-4 text-teal-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{patient.ptName}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {patient.ptName}
+                        </p>
                         {patient.email && (
-                          <p className="text-xs text-gray-500">{patient.email}</p>
+                          <p className="text-xs text-gray-500">
+                            {patient.email}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -183,8 +192,12 @@ const [dateFilter, setDateFilter] = useState(today);
       {filteredPatients.length === 0 && (
         <div className="bg-white rounded-lg p-12 border border-gray-200 text-center">
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No patients found</h3>
-          <p className="text-gray-500">No patients match your search criteria.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No patients found
+          </h3>
+          <p className="text-gray-500">
+            No patients match your search criteria.
+          </p>
         </div>
       )}
     </div>
