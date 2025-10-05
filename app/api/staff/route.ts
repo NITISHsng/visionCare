@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { getCollection } from "@/lib/mongodb";
+import clientPromise from "@/lib/mongodb";
 import { Staff } from "../../../src/contexts/type";
 import { ObjectId } from "mongodb";
+
 export async function POST(req: Request) {
   try {
     const body: Staff = await req.json();
@@ -9,22 +10,22 @@ export async function POST(req: Request) {
     // ✅ Validate user input
     if (!body.name || !body.phone || !body.role) {
       return NextResponse.json(
-        { success: false, error: "Missing required fields: patient name or phone number" },
+        { success: false, error: "Missing required fields: name, phone, or role" },
         { status: 400 }
       );
     }
-    
-    // ✅ Get collection
-    const collection = await getCollection<Staff>("staff");
 
+    // ✅ Connect directly to MongoDB
+    const client = await clientPromise;
+    const db = client.db("visionCare");
+    const collection = db.collection<Staff>("staff");
 
-    const result = await collection.insertOne({
-      ...body,
-    });
+    // ✅ Insert staff member
+    const result = await collection.insertOne({ ...body });
 
     return NextResponse.json({ success: true, id: result.insertedId });
   } catch (error: unknown) {
-    console.error("Error in api:", error);
+    console.error("Error in POST /api/staff:", error);
 
     const message = error instanceof Error ? error.message : "Internal server error";
 
@@ -47,8 +48,12 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const collection = await getCollection<Staff>("staff");
+    // ✅ Connect directly to MongoDB
+    const client = await clientPromise;
+    const db = client.db("visionCare");
+    const collection = db.collection<Staff>("staff");
 
+    // ✅ Delete staff by ID
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
 
     if (result.deletedCount === 0) {
@@ -68,4 +73,3 @@ export async function DELETE(req: Request) {
     );
   }
 }
-
