@@ -10,6 +10,7 @@ export async function GET() {
       (await getCollection("patients")).find({}).sort({ updatedAt: -1 }).toArray(),
     ]);
 
+    
     return NextResponse.json({
       staff,
       appointments,
