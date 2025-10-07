@@ -1,15 +1,14 @@
 export type Staff = {
-  id: string;          // Unique staff ID
-  name: string;        // Full name
-  email?: string;      // Optional email
-  phone?: string;      // Optional phone number
-  role?: "admin" | "operator";  // Staff role
-  createdAt?: string;  // Date added
-  password:string;
-   isActive: boolean;
-  updatedAt: string;       // Full name
+  id: string; // Unique staff ID
+  name: string; // Full name
+  email?: string; // Optional email
+  phone?: string; // Optional phone number
+  role?: "admin" | "operator"; // Staff role
+  createdAt?: string; // Date added
+  password: string;
+  isActive: boolean;
+  updatedAt: string; // Full name
 };
-
 
 export const initialStaff: Staff = {
   id: "",
@@ -18,29 +17,29 @@ export const initialStaff: Staff = {
   phone: "",
   role: "operator",
   createdAt: new Date().toISOString(),
-  password:"password",
-  updatedAt:"",
-   isActive: false
+  password: "password",
+  updatedAt: "",
+  isActive: false,
 };
 
-export type staffWithId= Staff & {_id?:string};
-export type User ={
+export type staffWithId = Staff & { _id?: string };
+export type User = {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'operator';
+  role: "admin" | "operator";
   phone?: string;
   isActive: boolean;
   createdAt: string;
-  updatedAt: string;       // Full name
-  password:string;
-}
-export type AuthContextType= {
+  updatedAt: string; // Full name
+  password: string;
+};
+export type AuthContextType = {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
-}
+};
 
 export type Service = {
   name: string;
@@ -49,21 +48,21 @@ export type Service = {
   duration: string;
   category: "examination" | "treatment" | "surgery" | "consultation" | "";
   isActive: boolean;
-  createdAt:string;
-  updatedAt:string;
-  maxDiscouunt:number;
+  createdAt: string;
+  updatedAt: string;
+  maxDiscouunt: number;
 };
-export type serviceWithId=Service & {_id?:string};
+export type serviceWithId = Service & { _id?: string };
 export const initialService: Service = {
   name: "",
   description: "",
   price: 0,
   duration: "",
   category: "", // default category
-  isActive: true,           // default active
-  maxDiscouunt:0,
-    createdAt:new Date().toISOString(),
-    updatedAt:"",
+  isActive: true, // default active
+  maxDiscouunt: 0,
+  createdAt: new Date().toISOString(),
+  updatedAt: "",
 };
 
 export type Appointment = {
@@ -71,7 +70,7 @@ export type Appointment = {
   ptName: string;
   age: number; // should be number, not string
   phoneNo: string;
-  email?:string;
+  email?: string;
   preferredDate: string; // YYYY-MM-DD
   preferredTime: string; // HH:mm
   purpose: "eye-test" | "frame-selection" | "consultation" | "follow-up";
@@ -80,7 +79,7 @@ export type Appointment = {
   // assignedOperator?: string;
   createdAt: string;
   updatedAt: string;
-  repeated:boolean;
+  repeated: boolean;
   gender: "m" | "f" | "other";
 };
 
@@ -88,31 +87,53 @@ export const initialAppointment: Appointment = {
   id: "",
   ptName: "",
   age: 0,
-  email:"",
+  email: "",
   phoneNo: "",
   preferredDate: "",
   preferredTime: "",
   purpose: "eye-test",
   status: "pending",
   notes: "",
-  // assignedOperator: "",
-  createdAt:new Date().toISOString(),
+  createdAt: new Date().toISOString(),
   updatedAt: "",
-  gender:"m",
-  repeated:false,
+  gender: "m",
+  repeated: false,
 };
-
 
 export type Patient = {
   // Billing / Order Info
-  date: string;
-  orderDate: string;
+  visitDate: Date;
   billNo: string;
-  totalAmount: number;
-  advance: number;
-  due: number;
+
+  // Visit
+  visitPrice: number;
+  visitAdvance:number;
+  // Optical
+
+  // Order
+  opticalAdvance: number;
+  opticalaDue: number;
+
+  orderDate: string;
+
+  frameId: string;
+  lenseId: string;
+  lensePrice: number;
+
+  framePrice: number;
+
   deliveryDate: string;
 
+  // Medicine
+  medicineName: string;
+  medicineAdvance: number;
+  medicinePrice: number;
+  medicineDue: number;
+
+  // Totals
+  totalAmount: number;
+  totalAdvance: number;
+  totalDue: number;
   // Medical Info
   primaryWorkupBy: string;
   presentComplaints: string[];
@@ -158,12 +179,7 @@ export type Patient = {
     vitreous: string;
   };
   diagnosis: string[];
-  prescription:string;
-  // prescription: {
-  //   medicine: string;
-  //   dosage: string;
-  //   duration: string;
-  // }[];
+  prescription: string;
   nextReview: string;
   doctorRemarks: string;
   glassesPrescription: {
@@ -188,22 +204,37 @@ export type Patient = {
 };
 
 export type PatientFullType = Appointment & Patient;
-export type PatientFullTypeWithObjectId=PatientFullType & {_id?:string};
-
-const now = new Date();
-const formattedDate = `${String(now.getDate()).padStart(2, "0")}-${String(
-  now.getMonth() + 1
-).padStart(2, "0")}-${String(now.getFullYear())}`; // dd-mm-yy
+export type PatientFullTypeWithObjectId = PatientFullType & { _id?: string };
 
 export const initialPatient: Patient = {
   // Billing Info
-  date: formattedDate,
-  orderDate: "",
+  visitDate: new Date(),
+
   billNo: "",
-  totalAmount: 0,
-  advance: 0,
-  due: 0,
+  visitPrice: 0,
+  visitAdvance:0,
+  //order
+  opticalAdvance: 0,
+  opticalaDue: 0,
+  // frame
+  orderDate: "",
+
+  frameId: "",
+  framePrice: 0,
+  // lance
+  lenseId: "",
+  lensePrice: 0,
   deliveryDate: "",
+
+  //madicine
+  medicineName: "",
+  medicineAdvance: 0,
+  medicinePrice: 0,
+  medicineDue: 0,
+
+  totalAmount: 0,
+  totalAdvance: 0,
+  totalDue: 0,
 
   // Medical Info (empty/default values)
   primaryWorkupBy: "",
@@ -240,10 +271,6 @@ export const initialPatient: Patient = {
   },
 };
 
-
-
-
-
 export type Vendor = {
   id: string;
   name: string;
@@ -252,22 +279,22 @@ export type Vendor = {
   email: string;
   address: string;
   isActive: boolean;
-  createdAt: string;  // ISO date string
-  updatedAt: string;  // ISO date string
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
 };
 export type Order = {
   id: string;
-  orderDate: string;       // e.g., "2024-12-17"
-  ptName: string;          // patient name
+  orderDate: string; // e.g., "2024-12-17"
+  ptName: string; // patient name
   age: number;
   gender: "male" | "female" | "other";
   phone: string;
   billNo: string;
-  rPower: string;          // right eye power
-  lPower: string;          // left eye power
+  rPower: string; // right eye power
+  lPower: string; // left eye power
   advance: number;
   due: number;
-  vendor: string;          // linked to Company.name
+  vendor: string; // linked to Company.name
   rate: number;
   frame: string;
   lens: string;
@@ -276,9 +303,9 @@ export type Order = {
   adv: number;
   dueAmount: number;
   rcv: number;
-  deliveryDate: string;    // ISO date string or empty if not set
+  deliveryDate: string; // ISO date string or empty if not set
   opticalTotal: number;
   status: "processing" | "completed" | "cancelled"; // restrict to valid states
-  createdAt: string;       // ISO string
-  updatedAt: string;       // ISO string
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
 };

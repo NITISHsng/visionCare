@@ -13,6 +13,15 @@ export function PatientsTab() {
 
   const [repeatedFilter, setRepeatedFilter] = useState(""); // ✅ new filter
 
+
+const formatDateDisplay = (date: Date | string) => {
+  const d = new Date(date); // handle string or Date object
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = String(d.getFullYear()); // last 2 digits
+  return `${year}-${month}-${day}`;
+};
+
   const filteredPatients = patients.filter((patient) => {
     const matchStatus =
       patient.ptName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -27,10 +36,11 @@ export function PatientsTab() {
         ? patient.repeated === true
         : patient.repeated === false;
 
-    const matchesDate = !dateFilter || patient.preferredDate === dateFilter;
-
+    const matchesDate = !dateFilter || formatDateDisplay(patient.visitDate) === dateFilter;
     return matchStatus && matchRepeated && matchesDate;
   });
+
+
 
   return (
     <div className="space-y-4 md:space-x-6">
@@ -133,7 +143,7 @@ export function PatientsTab() {
                       ) : (
                         <span className="w-3 h-3 rounded-full bg-green-300"></span>
                       )}
-                      {patient.date}
+                      <span>{formatDateDisplay(patient.visitDate)}</span>
                     </span>
                   </td>
                   <td className="px-2 py-3 whitespace-nowrap">

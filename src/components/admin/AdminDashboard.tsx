@@ -10,6 +10,8 @@ import { OperatorsTab } from './OperatorsTab';
 import { ServicesTab } from './ServicesTab';
 import { ReportsTab } from './ReportsTab';
 import { ScheduleTab } from '../operator/ScheduleTab';
+import { OrdersTab } from './OrdersTab';
+
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -38,6 +40,8 @@ export function AdminDashboard() {
         return <ServicesTab />;
       case 'reports':
         return <ReportsTab />;
+      case 'orders':
+        return <OrdersTab />;
       default:
         return <DashboardOverview />;
     }

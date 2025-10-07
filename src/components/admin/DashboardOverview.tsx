@@ -10,7 +10,6 @@ import {
   XCircle,
 } from "lucide-react";
 
-
 import { IndianRupee, CreditCard, Wallet } from "lucide-react";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 export function DashboardOverview() {
@@ -18,8 +17,8 @@ export function DashboardOverview() {
 
   const { totalAdvance, totalDue, totalAmount } = patients.reduce(
     (acc, patient) => {
-      acc.totalAdvance += patient.advance ?? 0;
-      acc.totalDue += patient.due ?? 0;
+      acc.totalAdvance += 0;
+      acc.totalDue += 0;
       acc.totalAmount += patient.totalAmount ?? 0;
       return acc;
     },

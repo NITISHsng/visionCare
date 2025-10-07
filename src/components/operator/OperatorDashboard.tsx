@@ -8,6 +8,7 @@ import { AppointmentsTab } from '../admin/AppointmentsTab';
 import { PatientsTab } from '../admin/PatientsTab';
 import { ScheduleTab } from './ScheduleTab';
 import { ReportsTab } from '../admin/ReportsTab';
+import { OrdersTab } from '../admin/OrdersTab';
 
 export function OperatorDashboard() {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -33,6 +34,8 @@ export function OperatorDashboard() {
         return <ScheduleTab />;
       case 'reports':
         return <ReportsTab />;
+      case 'orders':
+        return <OrdersTab />;
       default:
         return <DashboardOverview />;
     }
