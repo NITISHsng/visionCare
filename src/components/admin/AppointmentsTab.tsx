@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 export function AppointmentsTab() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const { appointments } = useDashboardData();
+  const { appointments,fetchData } = useDashboardData();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
@@ -75,6 +75,7 @@ export function AppointmentsTab() {
       const data = await res.json();
       console.log("Appointment updated:", data);
       toast.success("Saved successfully!");
+      fetchData();
       setSavingId(null);
     } catch (err) {
       console.error("Error updating appointment:", err);

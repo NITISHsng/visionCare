@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 export function ServicesTab() {
   const [showServiceForm, setShowServiceFrom] = useState(false);
   const [serviceAddSuccess, setServiceAddSuccess] = useState(false);
-  const { services } = useDashboardData();
+  const { services,fetchData } = useDashboardData();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -65,10 +65,13 @@ export function ServicesTab() {
       }
 
       const result = await res.json();
-
+      setServiceForm(initialService);
       setServiceAddSuccess(true);
       setShowServiceFrom(false);
+
       toast.success("Saved successfully!");
+      fetchData();
+
       setTimeout(() => setServiceAddSuccess(false), 5000);
     } catch (error) {
       console.error("Error booking appointment:", error);
@@ -90,6 +93,7 @@ export function ServicesTab() {
       if (!res.ok) throw new Error("Failed to toggle status");
 
       toast.success("Status updated successfully!");
+      fetchData();
     } catch (error) {
       console.error("Error toggling service status:", error);
       toast.error("Failed to update status.");
@@ -108,8 +112,8 @@ export function ServicesTab() {
       });
 
       if (!res.ok) throw new Error("Failed to delete service");
-
       toast.success("Service deleted successfully!");
+      fetchData();
     } catch (error) {
       console.error("Error deleting service:", error);
       toast.error("Failed to delete service.");

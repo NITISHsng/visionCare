@@ -1,16 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Users, Search, Edit, Trash2, User, Eye } from "lucide-react";
+import { Users, Search, Edit, User, Eye } from "lucide-react";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import Link from "next/link";
 
 export function PatientsTab() {
-  const { patients } = useDashboardData();
+  const { patients} = useDashboardData();
   const [searchTerm, setSearchTerm] = useState("");
   const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
   const [dateFilter, setDateFilter] = useState(today);
-
   const [repeatedFilter, setRepeatedFilter] = useState(""); // ✅ new filter
 
 

@@ -8,21 +8,22 @@ export function useDashboardData() {
   const [services, setServices] = useState<serviceWithId[]>([]);
   const [patients, setPatients] = useState<PatientFullTypeWithObjectId[]>([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch("/api/dashboard", { method: "GET", cache: "no-store" });
-        const data = await res.json();
-        setStaffs(data.staff || []);
-        setAppointments(data.appointments || []);
-        setServices(data.services || []);
-        setPatients(data.patients || []);
-      } catch (err) {
-        console.error("Error fetching dashboard data:", err);
-      }
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/dashboard", { method: "GET", cache: "no-store" });
+      const data = await res.json();
+      setStaffs(data.staff || []);
+      setAppointments(data.appointments || []);
+      setServices(data.services || []);
+      setPatients(data.patients || []);
+    } catch (err) {
+      console.error("Error fetching dashboard data:", err);
     }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
-  return { staffs, appointments, services,patients };
+  return { staffs, appointments, services,patients, fetchData };
 }

@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 const EditPage = () => {
   const navigate = useRouter();
-  const { patients } = useDashboardData();
+  const { patients, fetchData } = useDashboardData();
   const params = useParams();
   const id = params?.id as string;
 
@@ -104,9 +104,21 @@ const EditPage = () => {
         updatedAt: new Date().toISOString(),
         medicineDue:
           (formData.medicinePrice ?? 0) - (formData.medicineAdvance ?? 0),
-        totalAmount:formData.visitPrice +formData.medicinePrice +formData.framePrice +formData.lensePrice,
-        totalAdvance:formData.visitPrice +formData.medicineAdvance+formData.opticalAdvance,
-        totalDue:formData.framePrice +formData.lensePrice - formData.opticalAdvance +formData.medicineDue,
+        totalAmount:
+          formData.visitPrice +
+          formData.medicinePrice +
+          formData.framePrice +
+          formData.lensePrice,
+        totalAdvance:
+          formData.visitPrice +
+          formData.medicineAdvance +
+          formData.opticalAdvance,
+        totalDue:
+          formData.framePrice +
+          formData.lensePrice -
+          formData.opticalAdvance +
+          formData.medicineDue,
+        opticalaPrice: formData.visitPrice + formData.lensePrice,
       };
 
       if (!id) throw new Error("Missing patient ID");
@@ -121,6 +133,7 @@ const EditPage = () => {
       const data = await res.json();
       localStorage.setItem("activeTab", "patients");
       toast.success("Saved successfully!");
+      fetchData();
       setFormData(updatedFormData);
       navigate.back();
     } catch (err) {
@@ -149,7 +162,6 @@ const EditPage = () => {
       setShowIopPachyCCT(false);
       setShowDiagnosis(false);
       setSomeDetails(false);
-
       // Then toggle the current section
       onToggle();
     };
@@ -267,7 +279,6 @@ const EditPage = () => {
               <option value="canciled">Canceled</option>
             </select>
           </div>
-
           {/* Notes & Complaints */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col">
@@ -301,93 +312,6 @@ const EditPage = () => {
           onToggle: () => setbasicDetails(!basicDetails),
           closedLabel: "Basic details",
           buttonLabels: { open: "Hide Details", closed: "Basic Details" },
-        },
-        isLargeScreen
-      )}
-
-      {(someDetails || isLargeScreen) && (
-        <div>
-          {/* Billing & Dates */}
-          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-            <div className="flex-1 flex flex-col">
-              <label className="font-medium mb-1">Bill No</label>
-              <input
-                type="text"
-                name="billNo"
-                value={formData.billNo}
-                onChange={handleChange}
-                placeholder="Enter Bill No"
-                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="font-medium mb-5">Examined By</label> <br />
-              <select
-                name="examinedBy"
-                value={formData.examinedBy}
-                onChange={handleChange}
-                className="border py-4 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              >
-                <option value="abc">Dr.abc</option>
-                <option value="Satish Singha">Dr.Satish Singha</option>
-              </select>
-            </div>
-
-            <div className="flex-1 flex flex-col">
-              <label className="font-medium mb-1">Order Date</label>
-              <input
-                type="date"
-                name="orderDate"
-                value={formData.orderDate}
-                onChange={handleChange}
-                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              />
-            </div>
-
-            <div className="flex-1 flex flex-col">
-              <label className="font-medium mb-1">Delivery Date</label>
-              <input
-                type="date"
-                name="deliveryDate"
-                value={formData.deliveryDate}
-                onChange={handleChange}
-                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Prescription */}
-          <div className="flex flex-col">
-            <label className="font-semibold mb-1">Prescription</label>
-            <input
-              type="text"
-              name="prescription"
-              value={formData.prescription}
-              onChange={handleChange}
-              className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          {/* Doctor Remarks */}
-          <div className="flex flex-col">
-            <label className="font-semibold mb-1">Doctor Remarks</label>
-            <textarea
-              name="doctorRemarks"
-              value={formData.doctorRemarks}
-              onChange={handleChange}
-              rows={4}
-              className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-        </div>
-      )}
-      {/*Prescription Details Toggle */}
-      {renderToggleSection(
-        {
-          isOpen: someDetails,
-          onToggle: () => setSomeDetails(!someDetails),
-          closedLabel: "Prescription details",
-          buttonLabels: { open: "Hide Details", closed: "Show Details" },
         },
         isLargeScreen
       )}
@@ -741,6 +665,7 @@ const EditPage = () => {
                   { label: "SPH", key: "sph" },
                   { label: "CYL", key: "cyl" },
                   { label: "Axis", key: "axis" },
+                  { label: "add", key: "add" },
                   { label: "Prism", key: "prism" },
                   { label: "V_A", key: "V_A" },
                   { label: "N_V", key: "N_V" },
@@ -799,13 +724,30 @@ const EditPage = () => {
 
           {/* Common Datalists */}
           <datalist id="sphOptions">
-            <option value="+0.25" />
+            {Array.from({ length: 53 }, (_, i) => {
+              const numValue = i * 0.25 - 6;
+              const display = numValue.toFixed(2);
+              return (
+                <option
+                  key={display}
+                  value={numValue > 0 ? `+${display}` : display}
+                />
+              );
+            })}
+          </datalist>
+
+          <datalist id="addOptions">
             <option value="+0.50" />
-            <option value="-0.25" />
-            <option value="-0.50" />
-            <option value="-1.00" />
-            <option value="-2.00" />
-            <option value="-3.00" />
+            <option value="+0.75" />
+            <option value="+1.00" />
+            <option value="+1.25" />
+            <option value="+1.50" />
+            <option value="+1.75" />
+            <option value="+2.00" />
+            <option value="+2.25" />
+            <option value="+2.50" />
+            <option value="+2.75" />
+            <option value="+3.00" />
           </datalist>
 
           <datalist id="cylOptions">
@@ -831,19 +773,53 @@ const EditPage = () => {
           </datalist>
 
           <datalist id="vaOptions">
+            {/* Standard Snellen */}
             <option value="6/6" />
+            <option value="6/7.5" />
             <option value="6/9" />
             <option value="6/12" />
+            <option value="6/15" />
             <option value="6/18" />
             <option value="6/24" />
+            <option value="6/30" />
             <option value="6/36" />
+            <option value="6/45" />
+            <option value="6/60" />
+
+            {/* Low vision */}
+            <option value="5/60" />
+            <option value="4/60" />
+            <option value="3/60" />
+            <option value="2/60" />
+
+            {/* Special notations */}
+            <option value="CFC" />
+            <option value="HM" />
+            <option value="PL+" />
+            <option value="PL-" />
+            <option value="PLPr+" />
+
+            {/* Optional: Add more if needed */}
+            <option value="NLP" />
+            <option value="LP" />
           </datalist>
 
           <datalist id="nvOptions">
+            <option value="N3" />
+            <option value="N4" />
             <option value="N5" />
             <option value="N6" />
             <option value="N8" />
             <option value="N10" />
+            <option value="N12" />
+            <option value="N14" />
+            <option value="N16" />
+            <option value="N18" />
+            <option value="N20" />
+            <option value="N24" />
+            <option value="N36" />
+            <option value="N48" />
+            <option value="N60" />
           </datalist>
         </div>
       )}
@@ -1036,220 +1012,319 @@ const EditPage = () => {
         isLargeScreen
       )}
 
+      {(someDetails || isLargeScreen) && (
+        <div>
+          {/* Billing & Dates */}
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+            <div className="flex-1 flex flex-col">
+              <label className="font-medium mb-1">Bill No</label>
+              <input
+                type="text"
+                name="billNo"
+                value={formData.billNo}
+                onChange={handleChange}
+                placeholder="Enter Bill No"
+                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="font-medium mb-5">Delivery Status</label> <br />
+              <select
+                name="deliveryStatus"
+                value={formData.deliveryStatus}
+                onChange={handleChange}
+                className="border py-4 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              >
+                <option value="pending">Pending</option>
+                <option value="inProgress">In Progress</option>
+                <option value="readyToDeliver">Ready to Deliver</option>
+                <option value="delivered">Delivered</option>
+              </select>
+            </div>
+
+            <div className="flex-1 flex flex-col">
+              <label className="font-medium mb-1">Order Date</label>
+              <input
+                type="date"
+                name="orderDate"
+                value={formData.orderDate}
+                onChange={handleChange}
+                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+
+            <div className="flex-1 flex flex-col">
+              <label className="font-medium mb-1">Delivery Date</label>
+              <input
+                type="date"
+                name="deliveryDate"
+                value={formData.deliveryDate}
+                onChange={handleChange}
+                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Prescription */}
+          {/* <div className="flex flex-col">
+            <label className="font-semibold mb-1">Prescription</label>
+            <input
+              type="text"
+              name="prescription"
+              value={formData.prescription}
+              onChange={handleChange}
+              className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+            />
+          </div> */}
+
+          {/* Doctor Remarks */}
+          {/* <div className="flex flex-col">
+            <label className="font-semibold mb-1">Doctor Remarks</label>
+            <textarea
+              name="doctorRemarks"
+              value={formData.doctorRemarks}
+              onChange={handleChange}
+              rows={4}
+              className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+            />
+          </div> */}
+          {/* 👓 Optical / Frame & Lens Payment */}
+          <div>
+            {/* <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Optical Order
+          </h3> */}
+
+            {/* Frame & Lens */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex flex-col">
+                <label className="font-medium mb-1">Frame ID</label>
+                <input
+                  type="text"
+                  name="frameId"
+                  value={formData.frameId || ""}
+                  onChange={handleChange}
+                  className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="font-medium mb-1">Frame Price</label>
+                <input
+                  type="number"
+                  name="framePrice"
+                  value={formData.framePrice || 0}
+                  onChange={handleChange}
+                  className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="font-medium mb-1">Lens ID</label>
+                <input
+                  type="text"
+                  name="lenseId"
+                  value={formData.lenseId || ""}
+                  onChange={handleChange}
+                  className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="font-medium mb-1">Lens Price</label>
+                <input
+                  type="number"
+                  name="lensePrice"
+                  value={formData.lensePrice || 0}
+                  onChange={handleChange}
+                  className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+            </div>
+
+            {/* Optical Payment */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
+              <div className="flex flex-col">
+                <label className="font-medium mb-1">Optical Advance</label>
+                <input
+                  type="number"
+                  name="opticalAdvance"
+                  value={formData.opticalAdvance || 0}
+                  onChange={handleChange}
+                  className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="font-medium mb-1">Optical Due</label>
+                <input
+                  type="number"
+                  readOnly
+                  value={
+                    (formData.framePrice || 0) +
+                    (formData.lensePrice || 0) -
+                    (formData.opticalAdvance || 0)
+                  }
+                  className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
+                />
+              </div>
+
+              <div className="flex flex-col col-span-2 md:col-span-1">
+                <label className="font-medium mb-1">Optical Total</label>
+                <input
+                  type="number"
+                  readOnly
+                  value={
+                    (formData.framePrice || 0) + (formData.lensePrice || 0)
+                  }
+                  className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/*Prescription Details Toggle */}
+      {renderToggleSection(
+        {
+          isOpen: someDetails,
+          onToggle: () => setSomeDetails(!someDetails),
+          closedLabel: "Order details",
+          buttonLabels: { open: "Hide Details", closed: "Show Details" },
+        },
+        isLargeScreen
+      )}
+
       {/* Payment Details */}
-<div className="space-y-6">
-  {/* 🧾 Visit Payment */}
-  <div>
-    <h3 className="text-lg font-semibold text-gray-700 mb-2">Visit Payment</h3>
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-      <div className="flex flex-col col-span-2 md:col-span-1">
-        <label className="font-medium mb-1">Visit Price</label>
-        <input
-          type="number"
-          name="visitPrice"
-          value={formData.visitPrice || 0}
-          onChange={handleChange}
-          className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
-    </div>
-  </div>
+      <div className="space-y-2 md:space-x-4">
+        {/* 🧾 Visit Payment */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-700 my-2">
+            <hr />
+            Visit Payment
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="flex flex-col col-span-2 md:col-span-1">
+              <label className="font-medium mb-1">Visit Price</label>
+              <input
+                type="number"
+                name="visitPrice"
+                value={formData.visitPrice || 0}
+                onChange={handleChange}
+                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+          </div>
+        </div>
 
-  {/* 👓 Optical / Frame & Lens Payment */}
-  <div>
-    <h3 className="text-lg font-semibold text-gray-700 mb-2">Optical Order</h3>
+        {/* 💊 Medicine Payment */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Medicine Payment
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex flex-col">
+              <label className="font-medium mb-1">Medicine Name</label>
+              <input
+                type="text"
+                name="medicineName"
+                value={formData.medicineName || ""}
+                onChange={handleChange}
+                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
 
-    {/* Frame & Lens */}
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Frame ID</label>
-        <input
-          type="text"
-          name="frameId"
-          value={formData.frameId || ""}
-          onChange={handleChange}
-          className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
+            <div className="flex flex-col">
+              <label className="font-medium mb-1">Medicine Price</label>
+              <input
+                type="number"
+                name="medicinePrice"
+                value={formData.medicinePrice || 0}
+                onChange={handleChange}
+                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
 
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Frame Price</label>
-        <input
-          type="number"
-          name="framePrice"
-          value={formData.framePrice || 0}
-          onChange={handleChange}
-          className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
+            <div className="flex flex-col">
+              <label className="font-medium mb-1">Medicine Advance</label>
+              <input
+                type="number"
+                name="medicineAdvance"
+                value={formData.medicineAdvance || 0}
+                onChange={handleChange}
+                className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
 
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Lens ID</label>
-        <input
-          type="text"
-          name="lenseId"
-          value={formData.lenseId || ""}
-          onChange={handleChange}
-          className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
+            <div className="flex flex-col">
+              <label className="font-medium mb-1">Medicine Due</label>
+              <input
+                type="number"
+                readOnly
+                value={Math.max(
+                  0,
+                  (formData.medicinePrice || 0) -
+                    (formData.medicineAdvance || 0)
+                )}
+                className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
+              />
+            </div>
+          </div>
+        </div>
 
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Lens Price</label>
-        <input
-          type="number"
-          name="lensePrice"
-          value={formData.lensePrice || 0}
-          onChange={handleChange}
-          className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
-    </div>
+        {/* 💰 Grand Totals */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Grand Totals
+          </h3>
+          <div className="grid grid-cols-3  gap-4">
+            <div className="flex flex-col">
+              <label className="font-medium mb-1">Total Amount</label>
+              <input
+                type="number"
+                readOnly
+                value={
+                  (formData.visitPrice || 0) +
+                  (formData.framePrice || 0) +
+                  (formData.lensePrice || 0) +
+                  (formData.medicinePrice || 0)
+                }
+                className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
+              />
+            </div>
 
-    {/* Optical Payment */}
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Optical Advance</label>
-        <input
-          type="number"
-          name="opticalAdvance"
-          value={formData.opticalAdvance || 0}
-          onChange={handleChange}
-          className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
+            <div className="flex flex-col">
+              <label className="font-medium mb-1">Total Advance</label>
+              <input
+                type="number"
+                readOnly
+                value={
+                  (formData.opticalAdvance || 0) +
+                  (formData.medicineAdvance || 0) +
+                  (formData.visitPrice || 0)
+                }
+                className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
+              />
+            </div>
 
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Optical Due</label>
-        <input
-          type="number"
-          readOnly
-          value={
-            (formData.framePrice || 0) +
-            (formData.lensePrice || 0) -
-            (formData.opticalAdvance || 0)
-          }
-          className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
-        />
+            <div className="flex  flex-col">
+              <label className="font-medium mb-1">Total Due</label>
+              <input
+                type="number"
+                readOnly
+                value={Math.max(
+                  0,
+                  (formData.framePrice || 0) +
+                    (formData.lensePrice || 0) +
+                    (formData.medicinePrice || 0) -
+                    ((formData.opticalAdvance || 0) +
+                      (formData.medicineAdvance || 0))
+                )}
+                className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div className="flex flex-col col-span-2 md:col-span-1">
-        <label className="font-medium mb-1">Optical Total</label>
-        <input
-          type="number"
-          readOnly
-          value={(formData.framePrice || 0) + (formData.lensePrice || 0)}
-          className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
-        />
-      </div>
-    </div>
-  </div>
-
-  {/* 💊 Medicine Payment */}
-  <div>
-    <h3 className="text-lg font-semibold text-gray-700 mb-2">Medicine Payment</h3>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Medicine Name</label>
-        <input
-          type="text"
-          name="medicineName"
-          value={formData.medicineName || ""}
-          onChange={handleChange}
-          className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Medicine Price</label>
-        <input
-          type="number"
-          name="medicinePrice"
-          value={formData.medicinePrice || 0}
-          onChange={handleChange}
-          className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Medicine Advance</label>
-        <input
-          type="number"
-          name="medicineAdvance"
-          value={formData.medicineAdvance || 0}
-          onChange={handleChange}
-          className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Medicine Due</label>
-        <input
-          type="number"
-          readOnly
-          value={
-            Math.max(
-              0,
-              (formData.medicinePrice || 0) -
-                (formData.medicineAdvance || 0)
-            )
-          }
-          className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
-        />
-      </div>
-    </div>
-  </div>
-
-  {/* 💰 Grand Totals */}
-  <div>
-    <h3 className="text-lg font-semibold text-gray-700 mb-2">Grand Totals</h3>
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Total Amount</label>
-        <input
-          type="number"
-          readOnly
-          value={
-            (formData.visitPrice || 0) +
-            (formData.framePrice || 0) +
-            (formData.lensePrice || 0) +
-            (formData.medicinePrice || 0)
-          }
-          className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
-        />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="font-medium mb-1">Total Advance</label>
-        <input
-          type="number"
-          readOnly
-          value={(formData.opticalAdvance || 0) + (formData.medicineAdvance || 0) + (formData.visitPrice || 0)}
-          className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
-        />
-      </div>
-
-      <div className="flex flex-col col-span-2 md:col-span-1">
-        <label className="font-medium mb-1">Total Due</label>
-        <input
-          type="number"
-          readOnly
-          value={
-            Math.max(
-              0,
-                (formData.framePrice || 0) +
-                (formData.lensePrice || 0) +
-                (formData.medicinePrice || 0) -
-                ((formData.opticalAdvance || 0) +
-                  (formData.medicineAdvance || 0))
-            )
-          }
-          className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
-        />
-      </div>
-    </div>
-  </div>
-</div>
 
       {/* Save Button */}
       <div className="flex justify-end">

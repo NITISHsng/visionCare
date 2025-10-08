@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Eye, Edit } from "lucide-react";
+import { Eye, Edit, Search } from "lucide-react";
 import { PatientFullTypeWithObjectId } from "@/src/contexts/type";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import toast from "react-hot-toast";
+
 export function OrdersTab() {
-  const { patients } = useDashboardData();
+  const { patients ,fetchData} = useDashboardData();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [formData, setFormData] = useState<PatientFullTypeWithObjectId | null>(
     null
   );
+
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
 
   const handleViewClick = (order: PatientFullTypeWithObjectId) => {
@@ -31,6 +33,7 @@ export function OrdersTab() {
     setFormData(null);
   };
 
+  
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -65,37 +68,42 @@ export function OrdersTab() {
     }
   };
 
-  const handleNestedChange = (path: string, value: any) => {
-    setFormData((prev) => {
-      if (!prev) return prev;
-
-      const newData = { ...prev };
-      const keys = path.split(".");
-
-      let temp: any = newData;
-      keys.forEach((key, index) => {
-        if (index === keys.length - 1) {
-          temp[key] = value;
-        } else {
-          temp[key] = { ...temp[key] };
-          temp = temp[key];
-        }
-      });
-
-      return newData;
-    });
-  };
-
   const [saving, setSaving] = useState(false);
   const handleSaveEdit = async () => {
     const id = formData?._id;
     try {
       setSaving(true);
-
       const updatedFormData = {
         ...formData,
         updatedAt: new Date().toISOString(),
-        // due: (formData.totalAmount ?? 0) - (formData.totalDue ?? 0),
+
+        // Medicine Due
+        medicineDue:
+          (formData?.medicinePrice ?? 0) - (formData?.medicineAdvance ?? 0),
+
+        // Total Amount
+        totalAmount:
+          (formData?.visitPrice ?? 0) +
+          (formData?.medicinePrice ?? 0) +
+          (formData?.framePrice ?? 0) +
+          (formData?.lensePrice ?? 0),
+
+        // Total Advance
+        totalAdvance:
+          (formData?.visitPrice ?? 0) +
+          (formData?.medicineAdvance ?? 0) +
+          (formData?.opticalAdvance ?? 0),
+
+        // Total Due
+        totalDue:
+          (formData?.framePrice ?? 0) +
+          (formData?.lensePrice ?? 0) -
+          (formData?.opticalAdvance ?? 0) +
+          ((formData?.medicinePrice ?? 0) - (formData?.medicineAdvance ?? 0)),
+
+        // Optical Price
+        opticalaPrice:
+          (formData?.visitPrice ?? 0) + (formData?.lensePrice ?? 0),
       };
 
       if (!id) throw new Error("Missing patient ID");
@@ -108,9 +116,11 @@ export function OrdersTab() {
 
       if (!res.ok) throw new Error("Failed to save");
       const data = await res.json();
-      localStorage.setItem("activeTab", "patients");
+      localStorage.setItem("activeTab", "orders");
       toast.success("Saved successfully!");
+      fetchData();
       setIsEditPopupOpen(false);
+
     } catch (err) {
       console.error("Save failed:", err);
       toast.error("Failed to save");
@@ -122,85 +132,179 @@ export function OrdersTab() {
   };
 
   // Placeholder for orders data - will be fetched from API later
-  const orders: PatientFullTypeWithObjectId[] = patients;
+  // const orders: PatientFullTypeWithObjectId[] = patients;
+
+  const formatDateDisplay = (date: Date | string) => {
+    const d = new Date(date); // handle string or Date object
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = String(d.getFullYear()); // last 2 digits
+    return `${year}-${month}-${day}`;
+  };
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+  const [dateFilter, setDateFilter] = useState("");
+  const [deliveryStatusFilter, setDeliveryStatusFilter] = useState(""); // ✅ new filter
+
+  const orders = patients.filter((patient) => {
+    const matchStatus =
+      patient.ptName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.phoneNo.includes(searchTerm) ||
+      patient.billNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.email?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const filterByDeliveryStatus =
+      deliveryStatusFilter === "" // show all
+        ? true
+        : deliveryStatusFilter === patient.deliveryStatus;
+
+    const matchesDate =
+      !dateFilter || formatDateDisplay(patient.visitDate) === dateFilter;
+    return (
+      matchStatus && filterByDeliveryStatus && matchesDate && patient.billNo
+    );
+  });
 
   return (
-    <div className="p-6">
+    <div className="p-2">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
         Orders Management
       </h2>
+      <div className="bg-white rounded-lg p-2 md:p-5 border border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+          <div>
+            <label className="hidden md:block text-sm font-medium text-gray-700 mb-1">
+              Search
+            </label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input
+                type="text"
+                placeholder="Search by name, phone, bill number, or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-1">
+            <div>
+              <label className="hidden md:block text-sm font-medium text-gray-700 mb-1">
+                Delivery Status
+              </label>
+              <select
+                name="deliveryStatus"
+                value={deliveryStatusFilter}
+                onChange={(e) => setDeliveryStatusFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              >
+                <option value="">All</option>
+                <option value="pending">Pending</option>
+                <option value="inProgress">In Progress</option>
+                <option value="readyToDeliver">Ready to Deliver</option>
+                <option value="delivered">Delivered</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="hidden md:block text-sm font-medium text-gray-700 mb-1">
+                Date
+              </label>
+              <input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <table className="min-w-full leading-normal">
-          <thead>
-            <tr>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Bill No
-              </th>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Patient Name
-              </th>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Phone No
-              </th>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Due
-              </th>
-              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.length === 0 ? (
+        {/* Responsive Wrapper */}
+        <div className="overflow-x-auto">
+          <table className="min-w-[560px] md:min-w-full leading-normal w-full">
+            <thead>
               <tr>
-                <td colSpan={4} className="text-center py-4 text-gray-500">
-                  No orders found.
-                </td>
+                <th className="px-2 md:px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Bill No
+                </th>
+                <th className="px-2 md:px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Pt-Name
+                </th>
+                <th className="px-2 md:px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Phone No
+                </th>
+                <th className="px-2 md:px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Due
+                </th>
+                <th className="px-2 md:px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
-            ) : (
-              orders.map((order) => (
-                <tr
-                  key={order.billNo}
-                  className={`{order.totalDue>0 ? "text-red-600" :"text-red-600"  }`}
-                >
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {order.billNo}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {order.ptName}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {order.phoneNo}
-                  </td>
+            </thead>
+
+            <tbody>
+              {orders.length === 0 ? (
+                <tr>
                   <td
-                    className={`px-5 py-5 border-b border-gray-200 bg-white text-sm ${
-                      order.totalDue > 0 ? "text-red-600" : ""
-                    }`}
+                    colSpan={5}
+                    className="text-center px-2 md:px-4 text-gray-500 py-4"
                   >
-                    {order.totalDue}
-                  </td>
-                  <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handleViewClick(order)}
-                        className="text-teal-600 hover:text-teal-900 focus:outline-none"
-                      >
-                        <Eye className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => handleEditClick(order)}
-                        className="text-blue-600 hover:text-blue-900 focus:outline-none"
-                      >
-                        <Edit className="h-5 w-5" />
-                      </button>
-                    </div>
+                    No orders found.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                orders.map((order) => (
+                  <tr
+                    key={order.billNo}
+                    className={`transition-colors ${
+                      order.totalDue > 0
+                        ? "bg-red-50"
+                        : "bg-white text-gray-800"
+                    } hover:bg-gray-50`}
+                  >
+                    <td className="px-2 md:px-4 py-2 border-b border-gray-200 text-sm font-medium">
+                      {order.billNo}
+                    </td>
+                    <td className="px-2 md:px-4 py-2 border-b border-gray-200 text-sm">
+                      {order.ptName}
+                    </td>
+                    <td className="px-2 md:px-4 py-2 border-b border-gray-200 text-sm">
+                      {order.phoneNo}
+                    </td>
+                    <td
+                      className={`px-2 md:px-4 py-2 border-b border-gray-200 text-sm font-semibold ${
+                        order.totalDue > 0 ? "text-red-600" : "text-green-600"
+                      }`}
+                    >
+                      ₹{order.totalDue}
+                    </td>
+                    <td className="px-2 md:px-4 py-2 border-b border-gray-200 text-sm text-center">
+                      <div className="flex justify-center items-center space-x-3">
+                        <button
+                          onClick={() => handleViewClick(order)}
+                          className="text-teal-600 hover:text-teal-900 focus:outline-none"
+                        >
+                          <Eye className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleEditClick(order)}
+                          className="text-blue-600 hover:text-blue-900 focus:outline-none"
+                        >
+                          <Edit className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* View Popup/Modal for Order Details */}
@@ -228,36 +332,27 @@ export function OrdersTab() {
               </div>
 
               {/* Glasses Prescription */}
-              <div>
-                <h4 className="font-semibold mt-2">Glasses Prescription:</h4>
-                <p>
-                  <strong>Use:</strong> {formData.glassesPrescription.use}
-                </p>
-                <p>
-                  <strong>Right Eye SPH:</strong>{" "}
-                  {formData.glassesPrescription.rightEye.sph}
-                </p>
-                <p>
-                  <strong>Right Eye CYL:</strong>{" "}
-                  {formData.glassesPrescription.rightEye.cyl || "N/A"}
-                </p>
-                <p>
-                  <strong>Right Eye AXIS:</strong>{" "}
-                  {formData.glassesPrescription.rightEye.axis || "N/A"}
-                </p>
-                <p>
-                  <strong>Left Eye SPH:</strong>{" "}
-                  {formData.glassesPrescription.leftEye.sph}
-                </p>
-                <p>
-                  <strong>Left Eye CYL:</strong>{" "}
-                  {formData.glassesPrescription.leftEye.cyl || "N/A"}
-                </p>
-                <p>
-                  <strong>Left Eye AXIS:</strong>{" "}
-                  {formData.glassesPrescription.leftEye.axis || "N/A"}
-                </p>
-              </div>
+<div>
+  <h4 className="font-semibold mt-2">Glasses Prescription:</h4>
+  <p><strong>Use:</strong> {formData.glassesPrescription.use}</p>
+
+  <p><strong>Right Eye SPH:</strong> {formData.glassesPrescription.rightEye.sph}</p>
+  <p><strong>Right Eye CYL:</strong> {formData.glassesPrescription.rightEye.cyl || "N/A"}</p>
+  <p><strong>Right Eye AXIS:</strong> {formData.glassesPrescription.rightEye.axis || "N/A"}</p>
+  <p><strong>Right Eye Addition:</strong> {formData.glassesPrescription.rightEye.add || "N/A"}</p>
+  <p><strong>Right Eye Prism:</strong> {formData.glassesPrescription.rightEye.prism || "N/A"}</p>
+  <p><strong>Right Eye V.A:</strong> {formData.glassesPrescription.rightEye.V_A || "N/A"}</p>
+  <p><strong>Right Eye N.V:</strong> {formData.glassesPrescription.rightEye.N_V || "N/A"}</p>
+
+  <p><strong>Left Eye SPH:</strong> {formData.glassesPrescription.leftEye.sph}</p>
+  <p><strong>Left Eye CYL:</strong> {formData.glassesPrescription.leftEye.cyl || "N/A"}</p>
+  <p><strong>Left Eye AXIS:</strong> {formData.glassesPrescription.leftEye.axis || "N/A"}</p>
+  <p><strong>Left Eye Addition:</strong> {formData.glassesPrescription.leftEye.add || "N/A"}</p>
+  <p><strong>Left Eye Prism:</strong> {formData.glassesPrescription.leftEye.prism || "N/A"}</p>
+  <p><strong>Left Eye V.A:</strong> {formData.glassesPrescription.leftEye.V_A || "N/A"}</p>
+  <p><strong>Left Eye N.V:</strong> {formData.glassesPrescription.leftEye.N_V || "N/A"}</p>
+</div>
+
 
               {/* Order Details */}
               <div>
@@ -270,13 +365,28 @@ export function OrdersTab() {
                   <p>
                     <strong>Order Date:</strong>{" "}
                     {formData.orderDate
-                      ? new Date(formData.orderDate).toLocaleDateString()
+                      ? new Date(formData.orderDate).toLocaleDateString(
+                          "en-GB",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "2-digit",
+                          }
+                        )
                       : "N/A"}
                   </p>
+
                   <p>
                     <strong>Delivery Date:</strong>{" "}
                     {formData.deliveryDate
-                      ? new Date(formData.deliveryDate).toLocaleDateString()
+                      ? new Date(formData.deliveryDate).toLocaleDateString(
+                          "en-GB",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "2-digit",
+                          }
+                        )
                       : "N/A"}
                   </p>
                 </div>
@@ -305,31 +415,6 @@ export function OrdersTab() {
                     </p>
                     <p>
                       <strong>Lens Price:</strong> ₹{formData.lensePrice || 0}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Medicine Details */}
-                <div className="mt-3">
-                  <h5 className="font-semibold text-blue-700">
-                    Medicine Details:
-                  </h5>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-700">
-                    <p>
-                      <strong>Medicine Name:</strong>{" "}
-                      {formData.medicineName || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Medicine Price:</strong> ₹
-                      {formData.medicinePrice || 0}
-                    </p>
-                    <p>
-                      <strong>Medicine Advance:</strong> ₹
-                      {formData.medicineAdvance || 0}
-                    </p>
-                    <p>
-                      <strong>Medicine Due:</strong> ₹
-                      {formData.medicineDue || 0}
                     </p>
                   </div>
                 </div>
@@ -365,14 +450,14 @@ export function OrdersTab() {
       {/* Edit Popup/Modal for Order Details */}
       {isEditPopupOpen && formData && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex justify-center items-center">
-          <div className="relative p-6 md:p-8 border w-full max-w-2xl md:max-w-3xl lg:max-w-4xl shadow-lg rounded-xl bg-white overflow-y-auto max-h-[95vh]">
+          <div className="relative p-2 md:p-4 border w-full max-w-2xl md:max-w-3xl lg:max-w-4xl shadow-lg rounded-xl bg-white overflow-y-auto max-h-[95vh]">
             <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
               Edit Order (Bill No: {formData.billNo})
             </h3>
 
-            <div className="space-y-8">
+            <div className="space-y-2">
               {/* 🧍 Basic Details */}
-              <section className="space-y-3">
+              {/* <section className="space-y-3">
                 <h3 className="text-xl font-semibold text-gray-700 border-b pb-2">
                   Basic Details
                 </h3>
@@ -427,10 +512,10 @@ export function OrdersTab() {
                     </select>
                   </div>
                 </div>
-              </section>
+              </section> */}
 
               {/* 👓 Glasses Prescription */}
-              <section className="space-y-4">
+              {/* <section className="space-y-4">
                 <h3 className="text-xl font-semibold text-gray-700 border-b pb-2">
                   Glasses Prescription
                 </h3>
@@ -459,7 +544,7 @@ export function OrdersTab() {
                   </datalist>
                 </div>
 
-                {/* Prescription Table */}
+                
                 <div className="overflow-x-auto">
                   <table className="min-w-full border border-gray-300 rounded-lg">
                     <thead className="bg-gray-100">
@@ -489,7 +574,7 @@ export function OrdersTab() {
                             {label}
                           </td>
 
-                          {/* Right Eye */}
+                        
                           <td className="border px-3 py-2">
                             <input
                               type="text"
@@ -509,7 +594,6 @@ export function OrdersTab() {
                             />
                           </td>
 
-                          {/* Left Eye */}
                           <td className="border px-3 py-2">
                             <input
                               type="text"
@@ -533,15 +617,15 @@ export function OrdersTab() {
                     </tbody>
                   </table>
                 </div>
-              </section>
+              </section> */}
 
               {/* 🛒 Order Information */}
-              <section className="space-y-3">
+              <section className="space-y-2">
                 <h3 className="text-xl font-semibold text-gray-700 border-b pb-2">
                   Order Information
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
                     <label className="font-medium mb-1 block">Order Date</label>
                     <input
@@ -611,16 +695,38 @@ export function OrdersTab() {
                       className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
+                  <div>
+                    <label className="font-medium mb-1 block">
+                      Optical Price
+                    </label>
+                    <input
+                      type="number"
+                      name="opticalaPrice"
+                      value={formData.lensePrice + formData.framePrice}
+                      readOnly
+                      className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-medium mb-1 block">Pay</label>
+                    <input
+                      type="number"
+                      name="opticalAdvance"
+                      value={formData.opticalAdvance}
+                      onChange={handleInputChange}
+                      className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+                    />
+                  </div>
                 </div>
               </section>
 
               {/* 💰 Financial Summary */}
-              <section className="space-y-3">
+              <section className="space-y-2">
                 <h3 className="text-xl font-semibold text-gray-700 border-b pb-2">
                   Financial Summary
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
                   <div>
                     <label className="font-medium mb-1 block">
                       Total Amount
@@ -629,8 +735,8 @@ export function OrdersTab() {
                       type="number"
                       name="totalAmount"
                       value={formData.totalAmount}
-                      onChange={handleInputChange}
-                      className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+                      readOnly
+                      className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
                     />
                   </div>
 
@@ -642,8 +748,8 @@ export function OrdersTab() {
                       type="number"
                       name="totalAdvance"
                       value={formData.totalAdvance}
-                      onChange={handleInputChange}
-                      className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+                      readOnly
+                      className="border p-3 rounded w-full bg-gray-100 cursor-not-allowed"
                     />
                   </div>
 
