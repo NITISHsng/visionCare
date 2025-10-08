@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Calendar,
   Clock,
@@ -10,28 +10,30 @@ import {
   Search,
   CheckCircle,
 } from "lucide-react";
-// import { useAppointments } from "@/src/hooks/useAppointments";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import AppointmentForm from "@/src/components/AppointmentForm";
-import { Appointment } from "@/src/contexts/type";
+import { PatientFullTypeWithObjectId } from "@/src/contexts/type";
 import toast from "react-hot-toast";
 
 export function AppointmentsTab() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const { appointments,fetchData } = useDashboardData();
+  const { fetchData ,patients} = useDashboardData();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+  const today = new Date().toISOString().split("T")[0]; 
   const [dateFilter, setDateFilter] = useState(today);
   const [savingId, setSavingId] = useState<string | null>(null);
 
   // Track local edits for status as an array
-  const [editedAppointments, setEditedAppointments] = useState<Appointment[]>(
+  const [editedAppointments, setEditedAppointments] = useState<PatientFullTypeWithObjectId[]>(
     []
   );
-
-  const filteredAppointments = appointments.filter((appointment) => {
+  useEffect(() => {
+  fetchData();
+  }, [showBookingForm])
+  
+  const filteredAppointments = patients.filter((appointment) => {
     const matchesStatus =
       statusFilter === "all" || appointment.status === statusFilter;
     const matchesSearch =
@@ -42,10 +44,10 @@ export function AppointmentsTab() {
   });
 
   // Track status changes locally
-  const handleStatusChange = (appointment: Appointment, newStatus: string) => {
-    const updated: Appointment = {
+  const handleStatusChange = (appointment: PatientFullTypeWithObjectId, newStatus: string) => {
+    const updated: PatientFullTypeWithObjectId = {
       ...appointment,
-      status: newStatus as Appointment["status"], // ✅ cast here
+      status: newStatus as PatientFullTypeWithObjectId["status"], // ✅ cast here
     };
 
     setEditedAppointments((prev) => {
@@ -73,10 +75,9 @@ export function AppointmentsTab() {
       if (!res.ok) throw new Error("Failed to save");
 
       const data = await res.json();
-      console.log("Appointment updated:", data);
       toast.success("Saved successfully!");
-      fetchData();
       setSavingId(null);
+      fetchData();
     } catch (err) {
       console.error("Error updating appointment:", err);
       toast.error("Failed to save appointment.");

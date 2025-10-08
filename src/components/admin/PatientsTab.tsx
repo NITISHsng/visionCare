@@ -34,9 +34,9 @@ const formatDateDisplay = (date: Date | string) => {
         : repeatedFilter === "repeated"
         ? patient.repeated === true
         : patient.repeated === false;
-
+    const validpatient = patient.status==="completed" || patient.status==="confirmed";
     const matchesDate = !dateFilter || formatDateDisplay(patient.visitDate) === dateFilter;
-    return matchStatus && matchRepeated && matchesDate;
+    return matchStatus && matchRepeated && matchesDate && validpatient;
   });
 
 

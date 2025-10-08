@@ -15,7 +15,7 @@ import { initialStaff } from "../../contexts/type";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import toast from "react-hot-toast";
 export function OperatorsTab() {
-  const { staffs } = useDashboardData();
+  const { staffs,fetchData } = useDashboardData();
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
   const [saveSuccessfully, setSaveSuccessfully] = useState(false);
@@ -60,6 +60,7 @@ export function OperatorsTab() {
       setSaveSuccessfully(true);
       toast.success("Operator Create Successfully!");
       setTimeout(() => setSaveSuccessfully(false), 5000);
+      fetchData();
       setShowAddForm(false);
       setStaffForm(initialStaff);
     } catch (err) {
@@ -76,8 +77,8 @@ export function OperatorsTab() {
       });
 
       if (!res.ok) throw new Error("Failed to delete service");
-
       toast.success("Service deleted successfully!");
+      fetchData();
     } catch (error) {
       console.error("Error deleting service:", error);
       toast.error("Failed to delete service.");

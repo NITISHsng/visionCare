@@ -1,13 +1,13 @@
 export type Staff = {
-  id: string; // Unique staff ID
-  name: string; // Full name
-  email?: string; // Optional email
-  phone?: string; // Optional phone number
-  role?: "admin" | "operator"; // Staff role
-  createdAt?: string; // Date added
+  id: string;
+  name: string;
+  email?: string; 
+  phone?: string; 
+  role?: "admin" | "operator"; 
+  createdAt?: string;
   password: string;
   isActive: boolean;
-  updatedAt: string; // Full name
+  updatedAt: string; 
 };
 
 export const initialStaff: Staff = {
@@ -31,7 +31,7 @@ export type User = {
   phone?: string;
   isActive: boolean;
   createdAt: string;
-  updatedAt: string; // Full name
+  updatedAt: string; 
   password: string;
 };
 export type AuthContextType = {
@@ -68,19 +68,18 @@ export const initialService: Service = {
 export type Appointment = {
   id: string;
   ptName: string;
-  age: number; // should be number, not string
+  age: number; 
   phoneNo: string;
   email?: string;
-  preferredDate: string; // YYYY-MM-DD
-  preferredTime: string; // HH:mm
+  preferredDate: string; 
+  preferredTime: string; 
   purpose: "eye-test" | "frame-selection" | "consultation" | "follow-up";
   status: "pending" | "confirmed" | "completed" | "cancelled";
   notes?: string;
-  // assignedOperator?: string;
   createdAt: string;
   updatedAt: string;
   repeated: boolean;
-  gender: "m" | "f" | "other";
+  gender: "";
 };
 
 export const initialAppointment: Appointment = {
@@ -96,7 +95,7 @@ export const initialAppointment: Appointment = {
   notes: "",
   createdAt: new Date().toISOString(),
   updatedAt: "",
-  gender: "m",
+  gender: "",
   repeated: false,
 };
 
@@ -219,7 +218,6 @@ const defaultEyeDetail: EyeDetail = { right: "Normal", left: "Normal" };
 export const initialPatient: Patient = {
   // Billing Info
   visitDate: new Date(),
-
   billNo: "",
   visitPrice: 0,
   visitAdvance:0,
@@ -281,6 +279,92 @@ export const initialPatient: Patient = {
     use: "",
   },
 };
+
+
+export const patientDetails:PatientFullTypeWithObjectId={
+  id: "",
+  ptName: "",
+  age: 0,
+  email: "",
+  phoneNo: "",
+  preferredDate: "",
+  preferredTime: "",
+  purpose: "eye-test",
+  status: "pending",
+  notes: "",
+  createdAt: new Date().toISOString(),
+  updatedAt: "",
+  gender: "",
+  repeated: false,
+ // Billing Info
+  visitDate: new Date(),
+  billNo: "",
+  visitPrice: 0,
+  visitAdvance:0,
+  //order
+  opticalAdvance: 0,
+  opticalaDue: 0,
+  opticalaPrice:0,
+  // frame
+  orderDate: "",
+  deliveryStatus:"pending",
+  frameId: "",
+  framePrice: 0,
+  // lance
+  lenseId: "",
+  lensePrice: 0,
+  deliveryDate: "",
+
+  //madicine
+  medicineName: "",
+  medicineAdvance: 0,
+  medicinePrice: 0,
+  medicineDue: 0,
+
+  totalAmount: 0,
+  totalAdvance: 0,
+  totalDue: 0,
+
+  // Medical Info (empty/default values)
+  primaryWorkupBy: "",
+  presentComplaints: [],
+  iopPachyCCT: {
+    rightEye: { methodTime: "", iop: 0 },
+    leftEye: { methodTime: "", iop: 0 },
+  },
+  vision: {
+    rightEye: { unaidedDistance: "" },
+    leftEye: { unaidedDistance: "" },
+  },
+  examinedBy: "",
+  examDetails: {
+      adnexa: { ...defaultEyeDetail },
+  conjunctiva: { ...defaultEyeDetail },
+  cornea: { ...defaultEyeDetail },
+  anteriorChamber: { ...defaultEyeDetail },
+  iris: { ...defaultEyeDetail },
+  lens: { ...defaultEyeDetail },
+  fundus: { ...defaultEyeDetail },
+  orbit: { ...defaultEyeDetail },
+  syringing: { ...defaultEyeDetail },
+  vitreous: { ...defaultEyeDetail },
+  },
+  diagnosis: [],
+  prescription: "",
+  nextReview: "",
+  doctorRemarks: "",
+  glassesPrescription: {
+    rightEye: { sph: "", add: "" },
+    leftEye: { sph: "", add: "" },
+    use: "",
+  },
+}
+
+
+
+
+
+
 
 export type Vendor = {
   id: string;

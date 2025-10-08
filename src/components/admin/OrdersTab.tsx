@@ -1,16 +1,21 @@
-import React, { useState } from "react";
-import { Eye, Edit, Search } from "lucide-react";
-import { PatientFullTypeWithObjectId } from "@/src/contexts/type";
+import React, { useState,useEffect } from "react";
+import { Eye, Edit, Search, Plus } from "lucide-react";
+import {PatientFullTypeWithObjectId} from "@/src/contexts/type";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import toast from "react-hot-toast";
-
+import NewOrder from "../NewOrder";
 export function OrdersTab() {
-  const { patients ,fetchData} = useDashboardData();
+  const { patients, fetchData } = useDashboardData();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [formData, setFormData] = useState<PatientFullTypeWithObjectId | null>(
     null
   );
-
+  const [newOrderForm, setNewOrderForm] = useState(false);
+  const [OrderSuccess, setorderSuccess] = useState(false);
+  useEffect(() => {
+  fetchData();
+  }, [newOrderForm])
+  
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
 
   const handleViewClick = (order: PatientFullTypeWithObjectId) => {
@@ -33,7 +38,6 @@ export function OrdersTab() {
     setFormData(null);
   };
 
-  
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -120,7 +124,6 @@ export function OrdersTab() {
       toast.success("Saved successfully!");
       fetchData();
       setIsEditPopupOpen(false);
-
     } catch (err) {
       console.error("Save failed:", err);
       toast.error("Failed to save");
@@ -155,12 +158,12 @@ export function OrdersTab() {
       patient.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const filterByDeliveryStatus =
-      deliveryStatusFilter === "" // show all
+      deliveryStatusFilter === "" 
         ? true
         : deliveryStatusFilter === patient.deliveryStatus;
 
     const matchesDate =
-      !dateFilter || formatDateDisplay(patient.visitDate) === dateFilter;
+      !dateFilter || formatDateDisplay(patient.deliveryDate) === dateFilter;
     return (
       matchStatus && filterByDeliveryStatus && matchesDate && patient.billNo
     );
@@ -168,9 +171,31 @@ export function OrdersTab() {
 
   return (
     <div className="p-2">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Orders Management
-      </h2>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-[20px] md:text-2xl font-bold text-gray-900">
+            Orders Management
+          </h1>
+          <p className="text-gray-600 hidden lg:flex ">
+            View and manage all Orders
+          </p>
+        </div>
+        <button
+          onClick={() => setNewOrderForm(true)}
+          className="bg-teal-500 hover:bg-teal-600 text-white px-2 py-1 md:px-4 d:py-4 rounded-lg font-medium flex items-center space-x-2 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          <span>New Order</span>
+        </button>
+      </div>
+
+      {newOrderForm && (
+        <NewOrder
+          setNewOrderForm={setNewOrderForm}
+          setorderSuccess={setorderSuccess}
+        />
+      )}
+
       <div className="bg-white rounded-lg p-2 md:p-5 border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
           <div>
@@ -321,38 +346,106 @@ export function OrdersTab() {
                   <strong>Patient Name:</strong> {formData.ptName}
                 </p>
                 <p>
-                  <strong>Phone No:</strong> {formData.phoneNo}
+                  <strong>Phone No:</strong>{" "}
+                  {formData.phoneNo ? (
+                    <a
+                      href={`tel:${formData.phoneNo}`}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {formData.phoneNo}
+                    </a>
+                  ) : (
+                    "N/A"
+                  )}
+                </p>
+
+                <p>
+                  <strong>Email Id:</strong>{" "}
+                  {formData.email ? (
+                    <a
+                      href={`mailto:${formData.email}`}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {formData.email}
+                    </a>
+                  ) : (
+                    "N/A"
+                  )}
+                </p>
+
+                <p>
+                  <strong>Age:</strong> {formData.age || "N/A"}
                 </p>
                 <p>
-                  <strong>Age:</strong> {formData.age}
-                </p>
-                <p>
-                  <strong>Gender:</strong> {formData.gender}
+                  <strong>Gender:</strong> {formData.gender || "N/A"}
                 </p>
               </div>
 
               {/* Glasses Prescription */}
-<div>
-  <h4 className="font-semibold mt-2">Glasses Prescription:</h4>
-  <p><strong>Use:</strong> {formData.glassesPrescription.use}</p>
+              <div>
+                <h4 className="font-semibold mt-2">Glasses Prescription:</h4>
+                <p>
+                  <strong>Use:</strong> {formData.glassesPrescription.use}
+                </p>
 
-  <p><strong>Right Eye SPH:</strong> {formData.glassesPrescription.rightEye.sph}</p>
-  <p><strong>Right Eye CYL:</strong> {formData.glassesPrescription.rightEye.cyl || "N/A"}</p>
-  <p><strong>Right Eye AXIS:</strong> {formData.glassesPrescription.rightEye.axis || "N/A"}</p>
-  <p><strong>Right Eye Addition:</strong> {formData.glassesPrescription.rightEye.add || "N/A"}</p>
-  <p><strong>Right Eye Prism:</strong> {formData.glassesPrescription.rightEye.prism || "N/A"}</p>
-  <p><strong>Right Eye V.A:</strong> {formData.glassesPrescription.rightEye.V_A || "N/A"}</p>
-  <p><strong>Right Eye N.V:</strong> {formData.glassesPrescription.rightEye.N_V || "N/A"}</p>
+                <p>
+                  <strong>Right Eye SPH:</strong>{" "}
+                  {formData.glassesPrescription.rightEye.sph}
+                </p>
+                <p>
+                  <strong>Right Eye CYL:</strong>{" "}
+                  {formData.glassesPrescription.rightEye.cyl || "N/A"}
+                </p>
+                <p>
+                  <strong>Right Eye AXIS:</strong>{" "}
+                  {formData.glassesPrescription.rightEye.axis || "N/A"}
+                </p>
+                <p>
+                  <strong>Right Eye Addition:</strong>{" "}
+                  {formData.glassesPrescription.rightEye.add || "N/A"}
+                </p>
+                <p>
+                  <strong>Right Eye Prism:</strong>{" "}
+                  {formData.glassesPrescription.rightEye.prism || "N/A"}
+                </p>
+                <p>
+                  <strong>Right Eye V.A:</strong>{" "}
+                  {formData.glassesPrescription.rightEye.V_A || "N/A"}
+                </p>
+                <p>
+                  <strong>Right Eye N.V:</strong>{" "}
+                  {formData.glassesPrescription.rightEye.N_V || "N/A"}
+                </p>
 
-  <p><strong>Left Eye SPH:</strong> {formData.glassesPrescription.leftEye.sph}</p>
-  <p><strong>Left Eye CYL:</strong> {formData.glassesPrescription.leftEye.cyl || "N/A"}</p>
-  <p><strong>Left Eye AXIS:</strong> {formData.glassesPrescription.leftEye.axis || "N/A"}</p>
-  <p><strong>Left Eye Addition:</strong> {formData.glassesPrescription.leftEye.add || "N/A"}</p>
-  <p><strong>Left Eye Prism:</strong> {formData.glassesPrescription.leftEye.prism || "N/A"}</p>
-  <p><strong>Left Eye V.A:</strong> {formData.glassesPrescription.leftEye.V_A || "N/A"}</p>
-  <p><strong>Left Eye N.V:</strong> {formData.glassesPrescription.leftEye.N_V || "N/A"}</p>
-</div>
-
+                <p>
+                  <strong>Left Eye SPH:</strong>{" "}
+                  {formData.glassesPrescription.leftEye.sph}
+                </p>
+                <p>
+                  <strong>Left Eye CYL:</strong>{" "}
+                  {formData.glassesPrescription.leftEye.cyl || "N/A"}
+                </p>
+                <p>
+                  <strong>Left Eye AXIS:</strong>{" "}
+                  {formData.glassesPrescription.leftEye.axis || "N/A"}
+                </p>
+                <p>
+                  <strong>Left Eye Addition:</strong>{" "}
+                  {formData.glassesPrescription.leftEye.add || "N/A"}
+                </p>
+                <p>
+                  <strong>Left Eye Prism:</strong>{" "}
+                  {formData.glassesPrescription.leftEye.prism || "N/A"}
+                </p>
+                <p>
+                  <strong>Left Eye V.A:</strong>{" "}
+                  {formData.glassesPrescription.leftEye.V_A || "N/A"}
+                </p>
+                <p>
+                  <strong>Left Eye N.V:</strong>{" "}
+                  {formData.glassesPrescription.leftEye.N_V || "N/A"}
+                </p>
+              </div>
 
               {/* Order Details */}
               <div>
@@ -621,10 +714,29 @@ export function OrdersTab() {
 
               {/* 🛒 Order Information */}
               <section className="space-y-2">
-                <h3 className="text-xl font-semibold text-gray-700 border-b pb-2">
-                  Order Information
+                <h3 className=" flex justify-between border-b pb-2">
+                  <span className="text-xl font-semibold  text-gray-700">
+                    Order Information{" "}
+                  </span>
+                  <select
+                    name="deliveryStatus"
+                    value={formData.deliveryStatus}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        deliveryStatus: e.target.value,
+                      })
+                    }
+                    className=" px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="readyToDeliver">Ready to Deliver</option>
+                    <option value="delivered">Delivered</option>
+                  </select>
                 </h3>
 
+                <div></div>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
                     <label className="font-medium mb-1 block">Order Date</label>
@@ -776,10 +888,19 @@ export function OrdersTab() {
                 Cancel
               </button>
               <button
+                type="submit"
+                disabled={saving}
                 onClick={handleSaveEdit}
                 className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
               >
-                Save Changes
+                {saving ? (
+                  <div className="flex items-center space-x-2">
+                    <span className="spin"></span>
+                    <span>saveing...</span>
+                  </div>
+                ) : (
+                  "Save Changes"
+                )}
               </button>
             </div>
           </div>

@@ -4,8 +4,10 @@ import React from "react";
 import { BarChart3, TrendingUp, Calendar, Users, Download } from "lucide-react";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 export function ReportsTab() {
-  const { appointments } = useDashboardData();
-  const { patients } = useDashboardData();
+  const {patients } = useDashboardData();
+ const appointments = patients.filter(
+  (a) => a.status === "confirmed" || a.status === "completed"
+);
 
   const stats = {
     totalAppointments: appointments.length,

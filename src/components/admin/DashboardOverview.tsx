@@ -13,7 +13,10 @@ import {
 import { IndianRupee, CreditCard, Wallet } from "lucide-react";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 export function DashboardOverview() {
-  const { staffs, appointments, patients } = useDashboardData();
+  const { staffs, patients } = useDashboardData();
+ const totalPatients = patients.filter(
+  (a) => a.status === "confirmed" || a.status === "completed"
+).length;
 
   const { totalAdvance, totalDue, totalAmount } = patients.reduce(
     (acc, patient) => {
@@ -26,26 +29,25 @@ export function DashboardOverview() {
   );
 
   const stats = {
-    totalPatients: patients.length,
     totalOperators: staffs.length,
-    todayAppointments: appointments.filter(
+    todayAppointments: patients.filter(
       (apt) =>
         new Date(apt.preferredDate).toDateString() === new Date().toDateString()
     ).length,
-    pendingAppointments: appointments.filter((apt) => apt.status === "pending")
+    pendingAppointments: patients.filter((apt) => apt.status === "pending")
       .length,
-    confirmedAppointments: appointments.filter(
+    confirmedAppointments: patients.filter(
       (apt) => apt.status === "confirmed"
     ).length,
-    completedAppointments: appointments.filter(
+    completedAppointments: patients.filter(
       (apt) => apt.status === "completed"
     ).length,
-    cancelledAppointments: appointments.filter(
+    cancelledAppointments: patients.filter(
       (apt) => apt.status === "cancelled"
     ).length,
   };
 
-  const recentAppointments = appointments.slice(0, 5);
+  const recentAppointments = patients.slice(0, 5);
 
   return (
     <div className="space-y-3 md:space-y-4">
@@ -111,7 +113,7 @@ export function DashboardOverview() {
                 Total Patients
               </p>
               <p className="text-2xl font-bold flex justify-center text-gray-900">
-                {stats.totalPatients}
+                {totalPatients}
               </p>
             </div>
             <div className="w-8 md:w-12 h-8 md:h-12 flex bg-blue-100 rounded-lg  items-center justify-center">
@@ -141,8 +143,7 @@ export function DashboardOverview() {
                 Total Appointments
               </p>
               <p className="text-2xl font-bold flex justify-center text-gray-900">
-                {/* {stats.todayAppointments} */}
-                {appointments.length}
+                {patients.length}
               </p>
             </div>
             <div className="w-8 md:w-12 h-8 md:h-12 flex bg-blue-100 rounded-lg  items-center justify-center">

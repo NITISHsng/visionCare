@@ -4,7 +4,10 @@ import React, { useState } from 'react';
 import { Calendar, Clock, Users, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useDashboardData } from '@/src/contexts/dataCollection';
 export function ScheduleTab() {
-  const { appointments } = useDashboardData();
+    const {patients } = useDashboardData();
+   const appointments = patients.filter(
+    (a) => a.status != "completed"
+  );
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const formatDate = (date: Date) => {

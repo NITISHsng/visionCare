@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Appointment } from "../contexts/type";
-import { initialAppointment } from "../contexts/type";
+import { patientDetails ,PatientFullTypeWithObjectId} from "../contexts/type";
 import toast from "react-hot-toast";
 interface PatientFormProps {
   setShowBookingForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,7 +10,7 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
   setShowBookingForm,
   setBookingSuccess,
 }) => {
-  const [formValues, setFormValues] = useState<Appointment>(initialAppointment);
+  const [formValues, setFormValues] = useState<PatientFullTypeWithObjectId>(patientDetails);
   const [loading, setLoading] = useState(false);
   // handleChange updates state whenever an input changes
   const handleChange = (
@@ -29,7 +28,6 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
 
   function generateAppointmentId() {
     const now = new Date();
-
     const yy = String(now.getFullYear()).slice(-2); // last 2 digits of year
     const mm = String(now.getMonth() + 1).padStart(2, "0"); // months 0-11
     const dd = String(now.getDate()).padStart(2, "0");
@@ -55,14 +53,11 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
       if (!res.ok) {
         throw new Error("Failed to book appointment");
       }
-
       const result = await res.json();
-      console.log("Appointment booked:", result);
       toast.success("Appointment Booked Successfully")
-     setLoading(false);
+      setLoading(false);
       setBookingSuccess(true);
       setShowBookingForm(false);
-      
       setTimeout(() => setBookingSuccess(false), 5000);
     } catch (error) {
       console.error("Error booking appointment:", error);
