@@ -1,11 +1,27 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/mongodb";
+import { MongoClient } from "mongodb";
+
+const uri = process.env.MONGODB_URI!;
+if (!uri) throw new Error("Please define MONGODB_URI in .env.local or environment variables");
+
+let client: MongoClient;
+let clientPromise: Promise<MongoClient>;
+
+// prevent multiple connections during hot reload
+if (!globalThis._mongoClientPromise) {
+  client = new MongoClient(uri);
+  globalThis._mongoClientPromise = client.connect();
+}
+clientPromise = globalThis._mongoClientPromise;
 
 export async function GET() {
   try {
-    const db = await getDb("visionCare");
-    const collections = await db.collections();
-    const collectionNames = collections.map(c => c.collectionName);
+    const client = await clientPromise;
+    const db = client.db("visionCare"); // explicitly set your database name
+
+    // list collections
+    const collections = await db.listCollections().toArray();
+    const collectionNames = collections.map((c) => c.name);
 
     return NextResponse.json({
       success: true,
@@ -13,7 +29,10 @@ export async function GET() {
       collections: collectionNames,
     });
   } catch (error: unknown) {
-    console.error(error);
-    return NextResponse.json({ success: false, error: "Server error" }, { status: 500 });
+    console.error("Error fetching collections:", error);
+    return NextResponse.json(
+      { success: false, error: "Server error" },
+      { status: 500 }
+    );
   }
 }

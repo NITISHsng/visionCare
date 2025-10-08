@@ -1,15 +1,29 @@
 import { NextResponse } from "next/server";
-import { getCollection } from "@/lib/mongodb";
+import { MongoClient } from "mongodb";
+
+const uri = process.env.MONGODB_URI!;
+if (!uri) throw new Error("Please define MONGODB_URI in .env.local or environment variables");
+
+let client: MongoClient;
+let clientPromise: Promise<MongoClient>;
+
+if (!globalThis._mongoClientPromise) {
+  client = new MongoClient(uri);
+  globalThis._mongoClientPromise = client.connect();
+}
+clientPromise = globalThis._mongoClientPromise;
 
 export async function GET() {
   try {
+    const client = await clientPromise;
+    const db = client.db("visionCare"); // specify your database name
+
     const [staff, services, patients] = await Promise.all([
-      (await getCollection("staff")).find({}).sort({ createdAt: -1 }).toArray(),
-      (await getCollection("services")).find({}).sort({ createdAt: -1 }).toArray(),
-      (await getCollection("patients")).find({}).sort({ updatedAt: -1 }).toArray(),
+      db.collection("staff").find({}).sort({ createdAt: -1 }).toArray(),
+      db.collection("services").find({}).sort({ createdAt: -1 }).toArray(),
+      db.collection("patients").find({}).sort({ updatedAt: -1 }).toArray(),
     ]);
 
-    
     return NextResponse.json({
       staff,
       services,
