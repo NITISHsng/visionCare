@@ -119,7 +119,7 @@ export function Sidebar({ onTabChange, isOpen, onClose }: SidebarProps) {
         </nav>
 
         {user?.role === 'admin' && (
-          <div className="absolute bottom-4 left-4 right-4">
+          <div className="absolute hidden md:block  md:bottom-4 left-4 right-4">
             <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
               <div className="flex items-center space-x-2 mb-2">
                 <Shield className="h-4 w-4 text-teal-600" />

@@ -86,7 +86,7 @@ export function OperatorsTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 md:space-y-4">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-[20px] md:text-2xl font-bold text-gray-900">
@@ -131,11 +131,11 @@ export function OperatorsTab() {
       </div>
 
       {/* Operators Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
         {filteredOperators.map((operator) => (
           <div
             key={operator.id}
-            className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-md transition-shadow"
+            className="bg-white rounded-lg p-4 md:p-6 border border-gray-200 hover:shadow-md transition-shadow"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
@@ -156,7 +156,7 @@ export function OperatorsTab() {
               </div>
             </div>
 
-            <div className="space-y-2 mb-4">
+            <div className="space-y-2">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <Mail className="h-4 w-4" />
                 <span>{operator.email}</span>
@@ -178,14 +178,15 @@ export function OperatorsTab() {
               )}
             </div>
 
-            <div className="flex justify-between items-center">
-              <button
-                onClick={() => operator._id && deleteOperator(operator._id)}
-                className="text-red-600 hover:text-red-800 text-sm font-medium transition-colors"
-              >
-                Delete
-              </button>
-            </div>
+<div className="flex justify-end items-center">
+  <button
+    onClick={() => operator._id && deleteOperator(operator._id)}
+    className="px-3 py-1.5 text-red-600 hover:text-white hover:bg-red-600 border border-red-600 rounded-lg text-sm font-medium transition-all duration-200"
+  >
+    Delete
+  </button>
+</div>
+
           </div>
         ))}
       </div>
