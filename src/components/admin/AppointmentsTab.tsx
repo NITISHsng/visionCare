@@ -18,21 +18,21 @@ import toast from "react-hot-toast";
 export function AppointmentsTab() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const { fetchData ,patients} = useDashboardData();
+  const { fetchData, patients } = useDashboardData();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const today = new Date().toISOString().split("T")[0]; 
+  const today = new Date().toISOString().split("T")[0];
   const [dateFilter, setDateFilter] = useState(today);
   const [savingId, setSavingId] = useState<string | null>(null);
 
   // Track local edits for status as an array
-  const [editedAppointments, setEditedAppointments] = useState<PatientFullTypeWithObjectId[]>(
-    []
-  );
+  const [editedAppointments, setEditedAppointments] = useState<
+    PatientFullTypeWithObjectId[]
+  >([]);
   useEffect(() => {
-  fetchData();
-  }, [showBookingForm])
-  
+    fetchData();
+  }, [showBookingForm]);
+
   const filteredAppointments = patients.filter((appointment) => {
     const matchesStatus =
       statusFilter === "all" || appointment.status === statusFilter;
@@ -40,11 +40,16 @@ export function AppointmentsTab() {
       appointment.ptName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.phoneNo.includes(searchTerm);
     const matchesDate = !dateFilter || appointment.preferredDate === dateFilter;
-    return matchesStatus && matchesSearch && matchesDate;
+    const validAppointment =
+      appointment.age > 0 && appointment.preferredDate != "";
+    return matchesStatus && matchesSearch && matchesDate && validAppointment;
   });
 
   // Track status changes locally
-  const handleStatusChange = (appointment: PatientFullTypeWithObjectId, newStatus: string) => {
+  const handleStatusChange = (
+    appointment: PatientFullTypeWithObjectId,
+    newStatus: string
+  ) => {
     const updated: PatientFullTypeWithObjectId = {
       ...appointment,
       status: newStatus as PatientFullTypeWithObjectId["status"], // ✅ cast here
@@ -279,7 +284,15 @@ export function AppointmentsTab() {
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                   <Phone className="h-4 w-4" />
-                  <span>{appointment.phoneNo}</span>
+                  {appointment.phoneNo ? (
+                    <a
+                      href={`tel:${appointment.phoneNo}`}
+                    >
+                      {appointment.phoneNo}
+                    </a>
+                  ) : (
+                    <span>N/A</span>
+                  )}
                 </div>
               </div>
 

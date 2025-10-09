@@ -79,10 +79,9 @@ const ExportPatientsDetails: React.FC = () => {
       onClick={exportExcel}
       className="bg-green-600 text-white px-2 md:px-4 py-1 md:py-2 rounded-lg hover:bg-green-700"
     >
-
         <span className="flex items-center">
          <Download className="h-4 w-4" />
-      Export to Excel
+      Export 
         </span>
     </button>
   );

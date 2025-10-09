@@ -1,6 +1,6 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Eye, Edit, Search, Plus } from "lucide-react";
-import {PatientFullTypeWithObjectId} from "@/src/contexts/type";
+import { PatientFullTypeWithObjectId } from "@/src/contexts/type";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import toast from "react-hot-toast";
 import NewOrder from "../NewOrder";
@@ -13,9 +13,9 @@ export function OrdersTab() {
   const [newOrderForm, setNewOrderForm] = useState(false);
   const [OrderSuccess, setorderSuccess] = useState(false);
   useEffect(() => {
-  fetchData();
-  }, [newOrderForm])
-  
+    fetchData();
+  }, [newOrderForm]);
+
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
 
   const handleViewClick = (order: PatientFullTypeWithObjectId) => {
@@ -158,7 +158,7 @@ export function OrdersTab() {
       patient.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const filterByDeliveryStatus =
-      deliveryStatusFilter === "" 
+      deliveryStatusFilter === ""
         ? true
         : deliveryStatusFilter === patient.deliveryStatus;
 
@@ -168,6 +168,128 @@ export function OrdersTab() {
       matchStatus && filterByDeliveryStatus && matchesDate && patient.billNo
     );
   });
+
+  const sendToWhatsApp = (formData: PatientFullTypeWithObjectId) => {
+    if (!formData.phoneNo) {
+      alert("Phone number not available.");
+      return;
+    }
+
+    const phone = formData.phoneNo.replace(/\D/g, ""); // Clean phone number
+    const lines: string[] = [];
+
+    // Greeting
+    lines.push(`👋 Hello ${formData.ptName || "Patient"},`);
+    lines.push(
+      `Here are the details of your order (Bill No: ${formData.billNo}):\n`
+    );
+
+    // Delivery Status
+    let statusText = "";
+    switch (formData.deliveryStatus) {
+      case "pending":
+        statusText =
+          "🕒 Pending – Your order has been received and is waiting to be processed.";
+        break;
+      case "inProgress":
+        statusText = "🔄 In Progress – Your order is currently being prepared.";
+        break;
+      case "readyToDeliver":
+        statusText =
+          "✅ Ready to Deliver – Your order is packed and ready for delivery!";
+        break;
+      case "delivered":
+        statusText =
+          "📦 Delivered – Your order has been successfully delivered. We hope you enjoy it!";
+        break;
+      default:
+        statusText =
+          "❔ Unknown – Please contact us for more details about your order.";
+    }
+    lines.push(`📌 Status: ${statusText}\n`);
+
+    // Patient Info
+    lines.push("🧑 Patient Info:");
+    if (formData.ptName) lines.push(`Name: ${formData.ptName}`);
+    if (formData.phoneNo) lines.push(`Phone: ${formData.phoneNo}`);
+    if (formData.email) lines.push(`Email: ${formData.email}`);
+    if (formData.age) lines.push(`Age: ${formData.age}`);
+    if (formData.gender) lines.push(`Gender: ${formData.gender}`);
+    lines.push("");
+
+    // Glasses Prescription
+    const { glassesPrescription } = formData;
+    if (glassesPrescription) {
+      lines.push("👓 Glasses Prescription:");
+      if (glassesPrescription.use)
+        lines.push(`Use: ${glassesPrescription.use}`);
+
+      const { rightEye, leftEye } = glassesPrescription;
+
+      if (rightEye) {
+        const rightParts = [
+          rightEye.sph ? `SPH ${rightEye.sph}` : null,
+          rightEye.cyl ? `CYL ${rightEye.cyl}` : null,
+          rightEye.axis ? `AXIS ${rightEye.axis}` : null,
+          rightEye.add ? `ADD ${rightEye.add}` : null,
+          rightEye.prism ? `PRISM ${rightEye.prism}` : null,
+          rightEye.V_A ? `V.A ${rightEye.V_A}` : null,
+          rightEye.N_V ? `N.V ${rightEye.N_V}` : null,
+        ].filter(Boolean);
+        if (rightParts.length)
+          lines.push(`Right Eye: ${rightParts.join(", ")}`);
+      }
+
+      if (leftEye) {
+        const leftParts = [
+          leftEye.sph ? `SPH ${leftEye.sph}` : null,
+          leftEye.cyl ? `CYL ${leftEye.cyl}` : null,
+          leftEye.axis ? `AXIS ${leftEye.axis}` : null,
+          leftEye.add ? `ADD ${leftEye.add}` : null,
+          leftEye.prism ? `PRISM ${leftEye.prism}` : null,
+          leftEye.V_A ? `V.A ${leftEye.V_A}` : null,
+          leftEye.N_V ? `N.V ${leftEye.N_V}` : null,
+        ].filter(Boolean);
+        if (leftParts.length) lines.push(`Left Eye: ${leftParts.join(", ")}`);
+      }
+      lines.push("");
+    }
+
+    // Frame & Lens
+    if (formData.frameId || formData.framePrice) {
+      lines.push("🖼️ Frame Details:");
+      if (formData.frameId) lines.push(`ID: ${formData.frameId}`);
+      if (formData.framePrice) lines.push(`Price: ₹${formData.framePrice}`);
+      lines.push("");
+    }
+
+    if (formData.lenseId || formData.lensePrice) {
+      lines.push("🔍 Lens Details:");
+      if (formData.lenseId) lines.push(`ID: ${formData.lenseId}`);
+      if (formData.lensePrice) lines.push(`Price: ₹${formData.lensePrice}`);
+      lines.push("");
+    }
+
+    // Financials
+    if (formData.totalAmount || formData.totalAdvance) {
+      lines.push("💰 Payment Details:");
+      if (formData.totalAmount)
+        lines.push(`Total Amount: ₹${formData.totalAmount}`);
+      if (formData.totalAdvance)
+        lines.push(`Total Advance Paid: ₹${formData.totalAdvance}`);
+
+      const due = (formData.totalAmount || 0) - (formData.totalAdvance || 0);
+      if (due > 0)
+        lines.push(`Amount Due: ₹${due} ⚠️ Please pay the remaining amount.`);
+      else lines.push("✅ Payment Complete. Thank you!");
+    }
+
+    lines.push("\nThank you for choosing us! 🙏");
+
+    const message = lines.join("\n");
+    const url = `https://wa.me/+91${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  };
 
   return (
     <div className="p-2">
@@ -299,8 +421,18 @@ export function OrdersTab() {
                       {order.ptName}
                     </td>
                     <td className="px-2 md:px-4 py-2 border-b border-gray-200 text-sm">
-                      {order.phoneNo}
+                      {order.phoneNo ? (
+                        <a
+                          href={`tel:${order.phoneNo}`}
+                          className="hover:underline"
+                        >
+                          {order.phoneNo}
+                        </a>
+                      ) : (
+                        "N/A"
+                      )}
                     </td>
+
                     <td
                       className={`px-2 md:px-4 py-2 border-b border-gray-200 text-sm font-semibold ${
                         order.totalDue > 0 ? "text-red-600" : "text-green-600"
@@ -535,6 +667,12 @@ export function OrdersTab() {
               >
                 Close
               </button>
+              <button
+                onClick={() => sendToWhatsApp(formData)}
+                className="ml-2 pformDatax-4 px-4 py-2 bg-green-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              >
+                Send
+              </button>
             </div>
           </div>
         </div>
@@ -549,7 +687,6 @@ export function OrdersTab() {
             </h3>
 
             <div className="space-y-2">
-             
               {/* 🛒 Order Information */}
               <section className="space-y-2">
                 <h3 className=" flex justify-between border-b pb-2">

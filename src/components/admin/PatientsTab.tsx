@@ -7,20 +7,19 @@ import Link from "next/link";
 import ExportPatientsDetails from "../ExportPatientsDetails";
 
 export function PatientsTab() {
-  const { patients} = useDashboardData();
+  const { patients } = useDashboardData();
   const [searchTerm, setSearchTerm] = useState("");
   const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
   const [dateFilter, setDateFilter] = useState(today);
   const [repeatedFilter, setRepeatedFilter] = useState(""); // ✅ new filter
 
-
-const formatDateDisplay = (date: Date | string) => {
-  const d = new Date(date); // handle string or Date object
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = String(d.getFullYear()); // last 2 digits
-  return `${year}-${month}-${day}`;
-};
+  const formatDateDisplay = (date: Date | string) => {
+    const d = new Date(date); // handle string or Date object
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = String(d.getFullYear()); // last 2 digits
+    return `${year}-${month}-${day}`;
+  };
 
   const filteredPatients = patients.filter((patient) => {
     const matchStatus =
@@ -35,15 +34,28 @@ const formatDateDisplay = (date: Date | string) => {
         : repeatedFilter === "repeated"
         ? patient.repeated === true
         : patient.repeated === false;
-    const validpatient = patient.status==="completed" || patient.status==="confirmed";
-    const matchesDate = !dateFilter || formatDateDisplay(patient.visitDate) === dateFilter;
+    const validpatient =
+      patient.status === "completed" || patient.status === "confirmed";
+    const matchesDate =
+      !dateFilter || formatDateDisplay(patient.visitDate) === dateFilter;
     return matchStatus && matchRepeated && matchesDate && validpatient;
   });
 
-
-
   return (
     <div className="space-y-4 md:space-x-6">
+            <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-[20px] md:text-2xl font-bold text-gray-900">
+            Patients Management
+          </h1>
+          <p className="text-gray-600 hidden lg:flex ">
+            Manage patient records and prescription information
+          </p>
+        </div>
+        <div>
+          <ExportPatientsDetails />
+        </div>
+      </div>
       <div className="bg-white rounded-lg p-2 md:p-5 border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
           <div>
@@ -93,20 +105,7 @@ const formatDateDisplay = (date: Date | string) => {
           </div>
         </div>
       </div>
-        <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-[20px] md:text-2xl font-bold text-gray-900">
-            Patients Management
-          </h1>
-          <p className="text-gray-600 hidden lg:flex ">
-             Manage patient records and prescription information
-          </p>
-        </div>
-        <div>
-          
-          <ExportPatientsDetails/>
-        </div>
-      </div>
+
 
       {/* Patients Table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
@@ -173,7 +172,16 @@ const formatDateDisplay = (date: Date | string) => {
                     {patient.age}
                   </td>
                   <td className="px-2 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {patient.phoneNo}
+                    {patient.phoneNo ? (
+                      <a
+                        href={`tel:${patient.phoneNo}`}
+                        className=" hover:underline"
+                      >
+                        {patient.phoneNo}
+                      </a>
+                    ) : (
+                      "N/A"
+                    )}
                   </td>
                   <td className="px-2 py-3 whitespace-nowrap">
                     <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">

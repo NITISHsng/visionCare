@@ -829,7 +829,7 @@ const EditPage = () => {
         {
           isOpen: showGlassesPrescription,
           onToggle: () => setShowGlassesPrescription(!showGlassesPrescription),
-          closedLabel: "Write Prescription",
+          closedLabel: "Prescription",
           buttonLabels: {
             open: "Hide Details",
             closed: "Show Details",
@@ -955,7 +955,7 @@ const EditPage = () => {
         {
           isOpen: showIopPachyCCT,
           onToggle: () => setShowIopPachyCCT(!showIopPachyCCT),
-          closedLabel: "Update IOP",
+          closedLabel: "IOP Details",
           buttonLabels: {
             open: "Hide Details",
             closed: "Show Details",
@@ -1278,7 +1278,7 @@ const EditPage = () => {
           </h3>
           <div className="grid grid-cols-3  gap-4">
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Total Amount</label>
+              <label className="font-medium mb-1">T-Amount</label>
               <input
                 type="number"
                 readOnly
@@ -1293,7 +1293,7 @@ const EditPage = () => {
             </div>
 
             <div className="flex flex-col">
-              <label className="font-medium mb-1">Total Advance</label>
+              <label className="font-medium mb-1">T-Advance</label>
               <input
                 type="number"
                 readOnly

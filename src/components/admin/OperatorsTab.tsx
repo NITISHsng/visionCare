@@ -15,7 +15,7 @@ import { initialStaff } from "../../contexts/type";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import toast from "react-hot-toast";
 export function OperatorsTab() {
-  const { staffs,fetchData } = useDashboardData();
+  const { staffs, fetchData } = useDashboardData();
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
   const [saveSuccessfully, setSaveSuccessfully] = useState(false);
@@ -164,7 +164,16 @@ export function OperatorsTab() {
               {operator.phone && (
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                   <Phone className="h-4 w-4" />
-                  <span>{operator.phone}</span>
+                  {operator.phone ? (
+                    <a
+                      href={`tel:${operator.phone}`}
+                      className="hover:underline"
+                    >
+                      {operator.phone}
+                    </a>
+                  ) : (
+                    <span>N/A</span>
+                  )}
                 </div>
               )}
             </div>

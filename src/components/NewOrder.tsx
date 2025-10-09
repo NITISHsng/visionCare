@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { patientDetails, PatientFullTypeWithObjectId } from "../contexts/type";
+import { initialPatient, PatientFullTypeWithObjectId } from "../contexts/type";
 import toast from "react-hot-toast";
 
 interface PatientFormProps {
@@ -12,7 +12,7 @@ const NewOrder: React.FC<PatientFormProps> = ({
   setorderSuccess,
 }) => {
   const [formData, setFormData] =
-    useState<PatientFullTypeWithObjectId>(patientDetails);
+    useState<PatientFullTypeWithObjectId>(initialPatient);
   const [loading, setLoading] = useState(false);
 
   // handle all inputs

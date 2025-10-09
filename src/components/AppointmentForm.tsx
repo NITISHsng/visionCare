@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { patientDetails ,PatientFullTypeWithObjectId} from "../contexts/type";
+import { initialPatient ,PatientFullTypeWithObjectId} from "../contexts/type";
 import toast from "react-hot-toast";
 interface PatientFormProps {
   setShowBookingForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -10,7 +10,7 @@ export const appointmentForm: React.FC<PatientFormProps> = ({
   setShowBookingForm,
   setBookingSuccess,
 }) => {
-  const [formValues, setFormValues] = useState<PatientFullTypeWithObjectId>(patientDetails);
+  const [formValues, setFormValues] = useState<PatientFullTypeWithObjectId>(initialPatient);
   const [loading, setLoading] = useState(false);
   // handleChange updates state whenever an input changes
   const handleChange = (

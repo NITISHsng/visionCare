@@ -79,25 +79,25 @@ export type Appointment = {
   createdAt: string;
   updatedAt: string;
   repeated: boolean;
-  gender: "";
+  gender?: "";
 };
 
-export const initialAppointment: Appointment = {
-  id: "",
-  ptName: "",
-  age: 0,
-  email: "",
-  phoneNo: "",
-  preferredDate: "",
-  preferredTime: "",
-  purpose: "eye-test",
-  status: "pending",
-  notes: "",
-  createdAt: new Date().toISOString(),
-  updatedAt: "",
-  gender: "",
-  repeated: false,
-};
+// export const initialAppointment: Appointment = {
+//   id: "",
+//   ptName: "",
+//   age: 0,
+//   email: "",
+//   phoneNo: "",
+//   preferredDate: "",
+//   preferredTime: "",
+//   purpose: "eye-test",
+//   status: "pending",
+//   notes: "",
+//   createdAt: new Date().toISOString(),
+//   updatedAt: "",
+//   gender: "",
+//   repeated: false,
+// };
 
 export type EyeDetail = {
   right: string;
@@ -215,73 +215,73 @@ export type Patient = {
 export type PatientFullType = Appointment & Patient;
 export type PatientFullTypeWithObjectId = PatientFullType & { _id?: string };
 const defaultEyeDetail: EyeDetail = { right: "Normal", left: "Normal" };
-export const initialPatient: Patient = {
-  // Billing Info
-  visitDate: new Date(),
-  billNo: "",
-  visitPrice: 0,
-  visitAdvance:0,
-  //order
-  opticalAdvance: 0,
-  opticalaDue: 0,
-  opticalaPrice:0,
-  // frame
-  orderDate: "",
-  deliveryStatus:"pending",
-  frameId: "",
-  framePrice: 0,
-  // lance
-  lenseId: "",
-  lensePrice: 0,
-  deliveryDate: "",
+// export const initialPatient: Patient = {
+//   // Billing Info
+//   visitDate: new Date(),
+//   billNo: "",
+//   visitPrice: 0,
+//   visitAdvance:0,
+//   //order
+//   opticalAdvance: 0,
+//   opticalaDue: 0,
+//   opticalaPrice:0,
+//   // frame
+//   orderDate: "",
+//   deliveryStatus:"pending",
+//   frameId: "",
+//   framePrice: 0,
+//   // lance
+//   lenseId: "",
+//   lensePrice: 0,
+//   deliveryDate: "",
 
-  //madicine
-  medicineName: "",
-  medicineAdvance: 0,
-  medicinePrice: 0,
-  medicineDue: 0,
+//   //madicine
+//   medicineName: "",
+//   medicineAdvance: 0,
+//   medicinePrice: 0,
+//   medicineDue: 0,
 
-  totalAmount: 0,
-  totalAdvance: 0,
-  totalDue: 0,
+//   totalAmount: 0,
+//   totalAdvance: 0,
+//   totalDue: 0,
 
-  // Medical Info (empty/default values)
-  primaryWorkupBy: "",
-  presentComplaints: [],
-  iopPachyCCT: {
-    rightEye: { methodTime: "", iop: 0 },
-    leftEye: { methodTime: "", iop: 0 },
-  },
-  vision: {
-    rightEye: { unaidedDistance: "" },
-    leftEye: { unaidedDistance: "" },
-  },
-  examinedBy: "",
-  examDetails: {
-      adnexa: { ...defaultEyeDetail },
-  conjunctiva: { ...defaultEyeDetail },
-  cornea: { ...defaultEyeDetail },
-  anteriorChamber: { ...defaultEyeDetail },
-  iris: { ...defaultEyeDetail },
-  lens: { ...defaultEyeDetail },
-  fundus: { ...defaultEyeDetail },
-  orbit: { ...defaultEyeDetail },
-  syringing: { ...defaultEyeDetail },
-  vitreous: { ...defaultEyeDetail },
-  },
-  diagnosis: [],
-  prescription: "",
-  nextReview: "",
-  doctorRemarks: "",
-  glassesPrescription: {
-    rightEye: { sph: "", add: "" },
-    leftEye: { sph: "", add: "" },
-    use: "",
-  },
-};
+//   // Medical Info (empty/default values)
+//   primaryWorkupBy: "",
+//   presentComplaints: [],
+//   iopPachyCCT: {
+//     rightEye: { methodTime: "", iop: 0 },
+//     leftEye: { methodTime: "", iop: 0 },
+//   },
+//   vision: {
+//     rightEye: { unaidedDistance: "" },
+//     leftEye: { unaidedDistance: "" },
+//   },
+//   examinedBy: "",
+//   examDetails: {
+//       adnexa: { ...defaultEyeDetail },
+//   conjunctiva: { ...defaultEyeDetail },
+//   cornea: { ...defaultEyeDetail },
+//   anteriorChamber: { ...defaultEyeDetail },
+//   iris: { ...defaultEyeDetail },
+//   lens: { ...defaultEyeDetail },
+//   fundus: { ...defaultEyeDetail },
+//   orbit: { ...defaultEyeDetail },
+//   syringing: { ...defaultEyeDetail },
+//   vitreous: { ...defaultEyeDetail },
+//   },
+//   diagnosis: [],
+//   prescription: "",
+//   nextReview: "",
+//   doctorRemarks: "",
+//   glassesPrescription: {
+//     rightEye: { sph: "", add: "" },
+//     leftEye: { sph: "", add: "" },
+//     use: "",
+//   },
+// };
 
 
-export const patientDetails:PatientFullTypeWithObjectId={
+export const initialPatient:PatientFullTypeWithObjectId={
   id: "",
   ptName: "",
   age: 0,
