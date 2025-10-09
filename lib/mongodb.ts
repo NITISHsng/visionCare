@@ -1,39 +1,33 @@
 import { MongoClient, Db, Collection, Document } from "mongodb";
 
 const uri = process.env.MONGODB_URI!;
-if (!uri) throw new Error("Please define MONGODB_URI in .env.local or environment variables");
+if (!uri) throw new Error("Please define MONGODB_URI in .env.local");
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
 declare global {
-  // allow hot-reload in dev without creating multiple clients
+  // allow global variable for hot-reload in dev
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
 if (process.env.NODE_ENV === "development") {
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri);
-    global._mongoClientPromise = client.connect();
+    global._mongoClientPromise = client.connect(); // connect once
   }
   clientPromise = global._mongoClientPromise;
 } else {
   client = new MongoClient(uri);
-  clientPromise = client.connect();
+  clientPromise = client.connect(); // connect once
 }
 
-// Helper: get Db
-export async function getDb(dbName: string = "visionCare"): Promise<Db> {
-  const client = await clientPromise;
-  return client.db(dbName);
-}
-
-// Helper: get Collection
+// helper function to get collection
 export async function getCollection<T extends Document = Document>(
-  name: string,
-  dbName: string = "visionCare"
+  name: string
 ): Promise<Collection<T>> {
-  const db = await getDb(dbName);
+  const client = await clientPromise;
+  const db: Db = client.db();
   return db.collection<T>(name);
 }
 
