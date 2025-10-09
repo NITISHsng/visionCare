@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Users, Search, Edit, User, Eye } from "lucide-react";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import Link from "next/link";
+import ExportPatientsDetails from "../ExportPatientsDetails";
 
 export function PatientsTab() {
   const { patients} = useDashboardData();
@@ -43,14 +44,6 @@ const formatDateDisplay = (date: Date | string) => {
 
   return (
     <div className="space-y-4 md:space-x-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Patient Management</h1>
-        <p className="text-gray-600 hidden lg:flex ">
-          Manage patient records and prescription information
-        </p>
-      </div>
-
-      {/* Filters */}
       <div className="bg-white rounded-lg p-2 md:p-5 border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
           <div>
@@ -98,6 +91,20 @@ const formatDateDisplay = (date: Date | string) => {
               />
             </div>
           </div>
+        </div>
+      </div>
+        <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-[20px] md:text-2xl font-bold text-gray-900">
+            Patients Management
+          </h1>
+          <p className="text-gray-600 hidden lg:flex ">
+             Manage patient records and prescription information
+          </p>
+        </div>
+        <div>
+          
+          <ExportPatientsDetails/>
         </div>
       </div>
 

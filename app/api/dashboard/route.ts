@@ -16,7 +16,7 @@ clientPromise = globalThis._mongoClientPromise;
 export async function GET() {
   try {
     const client = await clientPromise;
-    const db = client.db("visionCare"); // specify your database name
+    const db = client.db("visionCare");
 
     const [staff, services, patients] = await Promise.all([
       db.collection("staff").find({}).sort({ createdAt: -1 }).toArray(),
