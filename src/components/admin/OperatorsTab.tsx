@@ -9,11 +9,13 @@ import {
   Search,
   Shield,
   CheckCircle,
+  IdCard,
 } from "lucide-react";
 import { staffWithId } from "../../contexts/type";
 import { initialStaff } from "../../contexts/type";
 import { useDashboardData } from "@/src/contexts/dataCollection";
 import toast from "react-hot-toast";
+import bcrypt from 'bcryptjs';
 export function OperatorsTab() {
   const { staffs, fetchData } = useDashboardData();
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,10 +50,12 @@ export function OperatorsTab() {
     setLoading(true);
     // Example: POST to your API
     try {
+      const hashedPassword = await bcrypt.hash(staffForm.password, 10);
+      const staffData = { ...staffForm, password: hashedPassword };
       const res = await fetch("/api/staff", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(staffForm),
+        body: JSON.stringify(staffData),
       });
 
       if (!res.ok) throw new Error("Failed to add staff");
@@ -67,23 +71,29 @@ export function OperatorsTab() {
       console.error(err);
     }
   };
+const deleteOperator = async (id: string) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this service? This action cannot be undone.");
 
-  const deleteOperator = async (id: string) => {
-    try {
-      const res = await fetch("/api/staff", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
+  if (!confirmDelete) {
+    toast("Deletion cancelled.");
+    return;
+  }
 
-      if (!res.ok) throw new Error("Failed to delete service");
-      toast.success("Service deleted successfully!");
-      fetchData();
-    } catch (error) {
-      console.error("Error deleting service:", error);
-      toast.error("Failed to delete service.");
-    }
-  };
+  try {
+    const res = await fetch("/api/staff", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!res.ok) throw new Error("Failed to delete service");
+    toast.success("Service deleted successfully!");
+    fetchData();
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    toast.error("Failed to delete service.");
+  }
+};
 
   return (
     <div className="space-y-3 md:space-y-4">
@@ -157,9 +167,11 @@ export function OperatorsTab() {
             </div>
 
             <div className="space-y-2">
+
+             
               <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Mail className="h-4 w-4" />
-                <span>{operator.email}</span>
+                <IdCard className="h-4 w-4" />
+                <span>{operator.id}</span>
               </div>
               {operator.phone && (
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -176,6 +188,10 @@ export function OperatorsTab() {
                   )}
                 </div>
               )}
+               <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <Mail className="h-4 w-4" />
+                <span>{operator.email}</span>
+              </div>
             </div>
 
 <div className="flex justify-end items-center">
@@ -203,6 +219,19 @@ export function OperatorsTab() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Id*
+                  </label>
+                  <input
+                    type="text"
+                    name="id"
+                    value={staffForm.id}
+                    required
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Full Name*
                   </label>
                   <input
@@ -223,6 +252,20 @@ export function OperatorsTab() {
                     type="email"
                     name="email"
                     value={staffForm.email}
+                    required
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password*
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={staffForm.password}
                     required
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"

@@ -21,7 +21,7 @@ export function AppointmentsTab() {
   const { fetchData, patients } = useDashboardData();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const today = new Date().toISOString().split("T")[0];
+    const today= new Date().toLocaleString('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' });
   const [dateFilter, setDateFilter] = useState(today);
   const [savingId, setSavingId] = useState<string | null>(null);
 

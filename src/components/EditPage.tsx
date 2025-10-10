@@ -99,27 +99,33 @@ const EditPage = () => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const updatedFormData = {
-        ...formData,
-        updatedAt: new Date().toISOString(),
-        medicineDue:
-          (formData.medicinePrice ?? 0) - (formData.medicineAdvance ?? 0),
-        totalAmount:
-          formData.visitPrice +
-          formData.medicinePrice +
-          formData.framePrice +
-          formData.lensePrice,
-        totalAdvance:
-          formData.visitPrice +
-          formData.medicineAdvance +
-          formData.opticalAdvance,
-        totalDue:
-          formData.framePrice +
-          formData.lensePrice -
-          formData.opticalAdvance +
-          formData.medicineDue,
-        opticalaPrice: formData.visitPrice + formData.lensePrice,
-      };
+const updatedFormData = {
+  ...formData,
+  updatedAt: new Date().toISOString(),
+  medicineDue:
+    (formData.medicinePrice ?? 0) - (formData.medicineAdvance ?? 0),
+
+  totalAmount:
+    ((formData.visitPrice ?? 0) +
+      (formData.medicinePrice ?? 0) +
+      (formData.framePrice ?? 0) +
+      (formData.lensePrice ?? 0)),
+
+  totalAdvance:
+    ((formData.visitPrice ?? 0) +
+      (formData.medicineAdvance ?? 0) +
+      (formData.opticalAdvance ?? 0)),
+
+  totalDue:
+    (((formData.framePrice ?? 0) +
+      (formData.lensePrice ?? 0)) -
+      (formData.opticalAdvance ?? 0)) +
+    (formData.medicineDue ?? 0),
+
+  opticalaPrice:
+    ((formData.visitPrice ?? 0) +
+      (formData.lensePrice ?? 0)),
+};
 
       if (!id) throw new Error("Missing patient ID");
 
@@ -1102,6 +1108,7 @@ const EditPage = () => {
                   type="text"
                   name="frameId"
                   value={formData.frameId || ""}
+                  placeholder="Frame Id"
                   onChange={handleChange}
                   className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
                 />
@@ -1112,7 +1119,7 @@ const EditPage = () => {
                 <input
                   type="number"
                   name="framePrice"
-                  value={formData.framePrice || 0}
+                  value={formData.framePrice}
                   onChange={handleChange}
                   className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
                 />
@@ -1124,6 +1131,7 @@ const EditPage = () => {
                   type="text"
                   name="lenseId"
                   value={formData.lenseId || ""}
+                  placeholder="Lense Id"
                   onChange={handleChange}
                   className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
                 />
@@ -1134,7 +1142,7 @@ const EditPage = () => {
                 <input
                   type="number"
                   name="lensePrice"
-                  value={formData.lensePrice || 0}
+                  value={formData.lensePrice}
                   onChange={handleChange}
                   className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
                 />
@@ -1148,7 +1156,7 @@ const EditPage = () => {
                 <input
                   type="number"
                   name="opticalAdvance"
-                  value={formData.opticalAdvance || 0}
+                  value={formData.opticalAdvance}
                   onChange={handleChange}
                   className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
                 />
@@ -1208,7 +1216,7 @@ const EditPage = () => {
               <input
                 type="number"
                 name="visitPrice"
-                value={formData.visitPrice || 0}
+                value={formData.visitPrice }
                 onChange={handleChange}
                 className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
               />
@@ -1229,6 +1237,7 @@ const EditPage = () => {
                 name="medicineName"
                 value={formData.medicineName || ""}
                 onChange={handleChange}
+                placeholder="Enter Medicine Name"
                 className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
               />
             </div>
@@ -1238,7 +1247,7 @@ const EditPage = () => {
               <input
                 type="number"
                 name="medicinePrice"
-                value={formData.medicinePrice || 0}
+                value={formData.medicinePrice }
                 onChange={handleChange}
                 className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
               />
@@ -1249,7 +1258,7 @@ const EditPage = () => {
               <input
                 type="number"
                 name="medicineAdvance"
-                value={formData.medicineAdvance || 0}
+                value={formData.medicineAdvance }
                 onChange={handleChange}
                 className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
               />

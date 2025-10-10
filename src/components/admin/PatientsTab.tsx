@@ -9,7 +9,7 @@ import ExportPatientsDetails from "../ExportPatientsDetails";
 export function PatientsTab() {
   const { patients } = useDashboardData();
   const [searchTerm, setSearchTerm] = useState("");
-  const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
   const [dateFilter, setDateFilter] = useState(today);
   const [repeatedFilter, setRepeatedFilter] = useState(""); // ✅ new filter
 

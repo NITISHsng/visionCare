@@ -146,7 +146,6 @@ export function OrdersTab() {
   };
 
   const [searchTerm, setSearchTerm] = useState("");
-  const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
   const [dateFilter, setDateFilter] = useState("");
   const [deliveryStatusFilter, setDeliveryStatusFilter] = useState(""); // ✅ new filter
 
@@ -213,8 +212,6 @@ export function OrdersTab() {
     if (formData.ptName) lines.push(`Name: ${formData.ptName}`);
     if (formData.phoneNo) lines.push(`Phone: ${formData.phoneNo}`);
     if (formData.email) lines.push(`Email: ${formData.email}`);
-    if (formData.age) lines.push(`Age: ${formData.age}`);
-    if (formData.gender) lines.push(`Gender: ${formData.gender}`);
     lines.push("");
 
     // Glasses Prescription

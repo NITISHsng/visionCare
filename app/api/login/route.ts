@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCollection } from "@/lib/mongodb";
 import { Staff } from "@/src/contexts/type"; // Corrected import path
+import bcrypt from 'bcryptjs';
 
 export async function POST(req: Request) {
   try {
@@ -18,10 +19,10 @@ export async function POST(req: Request) {
     // ✅ Get collection
     const collection = await getCollection<Staff>("staff");
 
-    // ✅ Find staff by email and password
-    const staffMember = await collection.findOne({ email, password });
+    // ✅ Find staff by email
+    const staffMember = await collection.findOne({ email });
 
-    if (staffMember) {
+    if (staffMember && await bcrypt.compare(password, staffMember.password)) {
       // Exclude sensitive information like password before sending to client
       const { password, ...userWithoutPassword } = staffMember;
       return NextResponse.json({ success: true, user: userWithoutPassword });

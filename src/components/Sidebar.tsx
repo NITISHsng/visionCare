@@ -78,7 +78,7 @@ export function Sidebar({ onTabChange, isOpen, onClose }: SidebarProps) {
         lg:relative lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-3 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center">
               <Eye className="h-6 w-6 text-white" />

@@ -49,10 +49,10 @@ export function ReportsTab() {
             View clinic performance and statistics
           </p>
         </div>
-        <button className="bg-teal-500 hover:bg-teal-600 text-white px-2 py-1 md:px-4 d:py-4 rounded-lg font-medium flex items-center space-x-2 transition-colors">
+        {/* <button className="bg-teal-500 hover:bg-teal-600 text-white px-2 py-1 md:px-4 d:py-4 rounded-lg font-medium flex items-center space-x-2 transition-colors">
           <Download className="h-4 w-4" />
           <span>Export</span>
-        </button>
+        </button> */}
       </div>
 
       {/* Key Metrics */}

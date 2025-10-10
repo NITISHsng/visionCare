@@ -102,25 +102,31 @@ export function ServicesTab() {
     }
   };
 
-  const deleteService = async (id: string) => {
-    setDeletingId(id);
-    try {
-      const res = await fetch("/api/service", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
+const deleteService = async (id: string) => {
+  const confirmed = window.confirm("Are you sure you want to delete this service?");
+  if (!confirmed){  
+      toast("Deletion Cancelled.");
+    return;}
 
-      if (!res.ok) throw new Error("Failed to delete service");
-      toast.success("Service deleted successfully!");
-      fetchData();
-    } catch (error) {
-      console.error("Error deleting service:", error);
-      toast.error("Failed to delete service.");
-    } finally {
-      setDeletingId(null);
-    }
-  };
+  setDeletingId(id);
+  try {
+    const res = await fetch("/api/service", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!res.ok) throw new Error("Failed to delete service");
+
+    toast.success("Service deleted successfully!");
+    fetchData();
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    toast.error("Failed to delete service.");
+  } finally {
+    setDeletingId(null);
+  }
+};
 
   return (
     <div className="space-y-6">

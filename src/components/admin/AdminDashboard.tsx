@@ -42,6 +42,8 @@ export function AdminDashboard() {
         return <ReportsTab />;
       case 'orders':
         return <OrdersTab />;
+      case 'settings':
+        return <><div>Comming soon...</div></>;
       default:
         return <DashboardOverview />;
     }
