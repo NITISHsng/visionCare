@@ -266,13 +266,24 @@ const updatedFormData = {
               onChange={handleChange}
               className="border p-3 rounded focus:ring-2 focus:ring-blue-400 w-full"
             />
-            <input
-              type="time"
-              name="preferredTime"
-              value={formData.preferredTime}
-              onChange={handleChange}
-              className="border p-3 rounded focus:ring-2 focus:ring-blue-400 w-full"
-            />
+           <select
+  name="preferredTime"
+  value={formData.preferredTime}
+  onChange={handleChange}
+  className="border p-3 rounded focus:ring-2 focus:ring-blue-400 w-full"
+>
+  {Array.from({ length: 19 }, (_, i) => {
+    const hour = 9 + Math.floor(i / 2);
+    const minutes = i % 2 === 0 ? "00" : "30";
+    const time = `${hour.toString().padStart(2, "0")}:${minutes}`;
+    return (
+      <option key={time} value={time}>
+        {time}
+      </option>
+    );
+  })}
+</select>
+
             <select
               name="status"
               value={formData.status}
