@@ -1,13 +1,26 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 
-// 👇 this line forces Vercel to run this route dynamically every time
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    // 1️⃣ Get user info from request header
+    const authHeader = req.headers.get("x-user");
+    if (!authHeader) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = JSON.parse(authHeader);
+
+    // 2️⃣ Check user role
+    if (user.role !== "admin" && user.role !== "operator") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // 3️⃣ Fetch data only if authorized
     const client = await clientPromise;
-    const db = client.db("visionCare"); // optional but recommended
+    const db = client.db("visionCare");
 
     const [services, patients, staff] = await Promise.all([
       db.collection("services").find({}).sort({ createdAt: -1 }).toArray(),
@@ -18,6 +31,9 @@ export async function GET() {
     return NextResponse.json({ staff, services, patients });
   } catch (err) {
     console.error("Error fetching dashboard data:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

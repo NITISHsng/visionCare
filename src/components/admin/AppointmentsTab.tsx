@@ -40,9 +40,8 @@ export function AppointmentsTab() {
       appointment.ptName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.phoneNo.includes(searchTerm);
     const matchesDate = !dateFilter || appointment.preferredDate === dateFilter;
-    const validAppointment =
-      appointment.age > 0 && appointment.preferredDate != "";
-    return matchesStatus && matchesSearch && matchesDate && validAppointment;
+    const validAppointment =appointment.orderOnly == false ;
+        return matchesStatus && matchesSearch && matchesDate && validAppointment;
   });
 
   // Track status changes locally

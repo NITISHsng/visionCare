@@ -39,7 +39,7 @@ const ExportPatientsDetails: React.FC = () => {
     "opticalaPrice",
     "frameId",
     "framePrice",
-    "lenseId",
+    "lenseType",
     "lensePrice",
     "deliveryDate",
     "medicinePrice",

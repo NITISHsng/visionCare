@@ -73,6 +73,7 @@ const EditPage = () => {
     );
   };
 
+
   // Generic nested change handler
   const handleNestedChange = (path: string, value: any) => {
     setFormData((prev) => {
@@ -99,33 +100,31 @@ const EditPage = () => {
   const handleSave = async () => {
     try {
       setSaving(true);
-const updatedFormData = {
-  ...formData,
-  updatedAt: new Date().toISOString(),
-  medicineDue:
-    (formData.medicinePrice ?? 0) - (formData.medicineAdvance ?? 0),
+      const updatedFormData = {
+        ...formData,
+        updatedAt: new Date().toISOString(),
+        medicineDue:
+          (formData.medicinePrice ?? 0) - (formData.medicineAdvance ?? 0),
 
-  totalAmount:
-    ((formData.visitPrice ?? 0) +
-      (formData.medicinePrice ?? 0) +
-      (formData.framePrice ?? 0) +
-      (formData.lensePrice ?? 0)),
+        totalAmount:
+          (formData.visitPrice ?? 0) +
+          (formData.medicinePrice ?? 0) +
+          (formData.framePrice ?? 0) +
+          (formData.lensePrice ?? 0),
 
-  totalAdvance:
-    ((formData.visitPrice ?? 0) +
-      (formData.medicineAdvance ?? 0) +
-      (formData.opticalAdvance ?? 0)),
+        totalAdvance:
+          (formData.visitPrice ?? 0) +
+          (formData.medicineAdvance ?? 0) +
+          (formData.opticalAdvance ?? 0),
 
-  totalDue:
-    (((formData.framePrice ?? 0) +
-      (formData.lensePrice ?? 0)) -
-      (formData.opticalAdvance ?? 0)) +
-    (formData.medicineDue ?? 0),
+        totalDue:
+          (formData.framePrice ?? 0) +
+          (formData.lensePrice ?? 0) -
+          (formData.opticalAdvance ?? 0) +
+          (formData.medicineDue ?? 0),
 
-  opticalaPrice:
-    ((formData.visitPrice ?? 0) +
-      (formData.lensePrice ?? 0)),
-};
+        opticalaPrice: (formData.visitPrice ?? 0) + (formData.lensePrice ?? 0),
+      };
 
       if (!id) throw new Error("Missing patient ID");
 
@@ -266,23 +265,23 @@ const updatedFormData = {
               onChange={handleChange}
               className="border p-3 rounded focus:ring-2 focus:ring-blue-400 w-full"
             />
-           <select
-  name="preferredTime"
-  value={formData.preferredTime}
-  onChange={handleChange}
-  className="border p-3 rounded focus:ring-2 focus:ring-blue-400 w-full"
->
-  {Array.from({ length: 19 }, (_, i) => {
-    const hour = 9 + Math.floor(i / 2);
-    const minutes = i % 2 === 0 ? "00" : "30";
-    const time = `${hour.toString().padStart(2, "0")}:${minutes}`;
-    return (
-      <option key={time} value={time}>
-        {time}
-      </option>
-    );
-  })}
-</select>
+            <select
+              name="preferredTime"
+              value={formData.preferredTime}
+              onChange={handleChange}
+              className="border p-3 rounded focus:ring-2 focus:ring-blue-400 w-full"
+            >
+              {Array.from({ length: 19 }, (_, i) => {
+                const hour = 9 + Math.floor(i / 2);
+                const minutes = i % 2 === 0 ? "00" : "30";
+                const time = `${hour.toString().padStart(2, "0")}:${minutes}`;
+                return (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                );
+              })}
+            </select>
 
             <select
               name="status"
@@ -293,7 +292,7 @@ const updatedFormData = {
               <option value="pending">Pending</option>
               <option value="confirmed">Confirmed</option>
               <option value="compleated">Completed</option>
-              <option value="canciled">Canceled</option>
+              <option value="canciled">Canciled</option>
             </select>
           </div>
           {/* Notes & Complaints */}
@@ -1136,17 +1135,25 @@ const updatedFormData = {
                 />
               </div>
 
-              <div className="flex flex-col">
-                <label className="font-medium mb-1">Lens ID</label>
-                <input
-                  type="text"
-                  name="lenseId"
-                  value={formData.lenseId || ""}
-                  placeholder="Lense Id"
-                  onChange={handleChange}
-                  className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-                />
-              </div>
+         <div className="flex flex-col">
+  <label className="font-medium mb-1">Lens Type</label>
+  <select
+    name="lenseType" // ✅ must match formData key
+    value={formData.lenseType || ""}
+    onChange={handleChange}
+    className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
+  >
+    <option value="" disabled>
+      Select Lens Type
+    </option>
+    <option value="progressive">Progressive</option>
+    <option value="single-vision">Single Vision</option>
+    <option value="bifocal">Bifocal</option>
+    <option value="trifocal">Trifocal</option>
+    <option value="reading">Reading</option>
+  </select>
+</div>
+
 
               <div className="flex flex-col">
                 <label className="font-medium mb-1">Lens Price</label>
@@ -1227,7 +1234,7 @@ const updatedFormData = {
               <input
                 type="number"
                 name="visitPrice"
-                value={formData.visitPrice }
+                value={formData.visitPrice}
                 onChange={handleChange}
                 className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
               />
@@ -1258,7 +1265,7 @@ const updatedFormData = {
               <input
                 type="number"
                 name="medicinePrice"
-                value={formData.medicinePrice }
+                value={formData.medicinePrice}
                 onChange={handleChange}
                 className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
               />
@@ -1269,7 +1276,7 @@ const updatedFormData = {
               <input
                 type="number"
                 name="medicineAdvance"
-                value={formData.medicineAdvance }
+                value={formData.medicineAdvance}
                 onChange={handleChange}
                 className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
               />

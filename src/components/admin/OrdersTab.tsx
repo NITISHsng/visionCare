@@ -79,6 +79,7 @@ export function OrdersTab() {
       setSaving(true);
       const updatedFormData = {
         ...formData,
+        orderOnly: formData?.orderOnly || true,
         updatedAt: new Date().toISOString(),
 
         // Medicine Due
@@ -108,8 +109,8 @@ export function OrdersTab() {
         // Optical Price
         opticalaPrice:
           (formData?.visitPrice ?? 0) + (formData?.lensePrice ?? 0),
-      };
-
+        };
+       
       if (!id) throw new Error("Missing patient ID");
 
       const res = await fetch(`/api/patient?id=${id}`, {
@@ -260,9 +261,9 @@ export function OrdersTab() {
       lines.push("");
     }
 
-    if (formData.lenseId || formData.lensePrice) {
+    if (formData.lenseType || formData.lensePrice) {
       lines.push("🔍 Lens Details:");
-      if (formData.lenseId) lines.push(`ID: ${formData.lenseId}`);
+      if (formData.lenseType) lines.push(`ID: ${formData.lenseType}`);
       if (formData.lensePrice) lines.push(`Price: ₹${formData.lensePrice}`);
       lines.push("");
     }
@@ -633,7 +634,7 @@ export function OrdersTab() {
                   <h5 className="font-semibold text-blue-700">Lens Details:</h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-700">
                     <p>
-                      <strong>Lens ID:</strong> {formData.lenseId || "N/A"}
+                      <strong>Lens ID:</strong> {formData.lenseType || "N/A"}
                     </p>
                     <p>
                       <strong>Lens Price:</strong> ₹{formData.lensePrice || 0}
@@ -762,8 +763,8 @@ export function OrdersTab() {
                     <label className="font-medium mb-1 block">Lens ID</label>
                     <input
                       type="text"
-                      name="lenseId"
-                      value={formData.lenseId}
+                      name="lenseType"
+                      value={formData.lenseType}
                       onChange={handleInputChange}
                       className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
                     />

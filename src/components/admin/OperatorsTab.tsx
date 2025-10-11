@@ -145,7 +145,7 @@ const deleteOperator = async (id: string) => {
         {filteredOperators.map((operator) => (
           <div
             key={operator.id}
-            className="bg-white rounded-lg p-4 md:p-6 border border-gray-200 hover:shadow-md transition-shadow"
+            className="bg-white rounded-lg p-3 border border-gray-200 hover:shadow-md transition-shadow"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">

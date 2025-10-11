@@ -107,7 +107,7 @@ export type PatientFullType = {
   orderDate: string;
 
   frameId: string;
-  lenseId: string;
+  lenseType: string;
   lensePrice: number;
   framePrice: number;
   deliveryStatus:string;
@@ -167,7 +167,7 @@ export type PatientFullType = {
   syringing: EyeDetail;
   vitreous: EyeDetail;
 };
-
+  orderOnly:boolean;
   diagnosis: string[];
   prescription: string;
   nextReview: string;
@@ -229,7 +229,7 @@ export const initialPatient:PatientFullTypeWithObjectId={
   frameId: "",
   framePrice: 0,
   // lance
-  lenseId: "",
+  lenseType: "",
   lensePrice: 0,
   deliveryDate: "",
 
@@ -244,6 +244,7 @@ export const initialPatient:PatientFullTypeWithObjectId={
   totalDue: 0,
 
   // Medical Info (empty/default values)
+  orderOnly:false,
   primaryWorkupBy: "",
   presentComplaints: [],
   iopPachyCCT: {

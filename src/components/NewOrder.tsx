@@ -30,7 +30,8 @@ const NewOrder: React.FC<PatientFormProps> = ({
 
   // auto calculate totals
   useEffect(() => {
-    const opticalaPrice = Number(formData.framePrice) + Number(formData.lensePrice);
+    const opticalaPrice =
+      Number(formData.framePrice) + Number(formData.lensePrice);
     const totalAmount = opticalaPrice;
     const totalAdvance = Number(formData.opticalAdvance);
     const totalDue = totalAmount - totalAdvance;
@@ -87,7 +88,9 @@ const NewOrder: React.FC<PatientFormProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg p-4 md:p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-lg">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">🧾 New Optical Order</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          🧾 New Optical Order
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* 👤 Customer Details */}
@@ -197,14 +200,22 @@ const NewOrder: React.FC<PatientFormProps> = ({
               </div>
 
               <div>
-                <label className="font-medium mb-1 block">Lens ID</label>
-                <input
-                  type="text"
-                  name="lenseId"
-                  value={formData.lenseId}
+                <label className="font-medium mb-1 block">Lens Type</label>
+                <select
+                  name="lenseType"
+                  value={formData.lenseType || ""}
                   onChange={handleInputChange}
                   className="border p-3 rounded w-full focus:ring-2 focus:ring-blue-400"
-                />
+                >
+                  <option value="" disabled>
+                    Select Lens Type
+                  </option>
+                  <option value="progressive">Progressive</option>
+                  <option value="single-vision">Single Vision</option>
+                  <option value="bifocal">Bifocal</option>
+                  <option value="trifocal">Trifocal</option>
+                  <option value="reading">Reading</option>
+                </select>
               </div>
 
               <div>
